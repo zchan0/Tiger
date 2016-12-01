@@ -3,9 +3,16 @@
   "private": true,
   "dependencies": {
     "bootstrap-sass": "~3.3.5",
-    "modernizr": "~2.8.1"
+    "modernizr": "~2.8.1",
+    "jquery-validation": "^1.15.1",
+    "masonry": "^4.1.1",
+    "imagesloaded": "^4.1.1"
   },
   "overrides": {
+    "masonry": {
+      "main": ["./dist/masonry.pkgd.js"],
+      "dependencies": {}
+    },
     "bootstrap-sass": {
       "main": [
         "assets/stylesheets/_bootstrap.scss",

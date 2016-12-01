@@ -188,11 +188,13 @@ $("#loading")
     .ajaxComplete(function () {
         $(this).hide();
     });//hide it when uploaded.
+$('#signupForm').validate();
+$('#loginForm').validate();
 
 (function( $ ) {
 
 	var $container = $('.masonry-container');
-	$container.imagesLoaded( function () {
+	$container.imagesLoaded().progress( function () {
 		$container.masonry({
 			columnWidth: '.item',
 			itemSelector: '.item'
@@ -206,6 +208,8 @@ $("#loading")
 		$this.on('shown.bs.tab', function () {
 
 			$container.imagesLoaded( function () {
+		
+			$container.imagesLoaded().progress( function () {
 				$container.masonry({
 					columnWidth: '.item',
 					itemSelector: '.item'
@@ -216,3 +220,4 @@ $("#loading")
 	});  //end each
 
 })(jQuery);
+
