@@ -59,9 +59,17 @@ $('#logoutBtn').click(function () {
 });
 
 //delete content function
+<<<<<<< HEAD
 $('#deleteBtn').click(function() {
     var content = this.parentNode.parentNode.parentNode.parentNode;
     var container = content.parentNode;
+=======
+$('#deleteBtn').click(function(){
+    let content = this.parentNode.parentNode.parentNode.parentNode;
+    console.log('this element:',content.id.value);
+    let container = content.parentNode;
+    console.log('this container:',container);
+>>>>>>> fix some bugs
     container.removeChild(content);
 
     //need to connnect to server!
@@ -70,10 +78,12 @@ $('#deleteBtn').click(function() {
 //get init data function
 function getAllContent() {
     var data = {
+function getAllContent(){
+    let data = {
         start:0,
         pagesize:10
     };
-    data = data.serialize();
+    data = JSON.stringify(data);
 
     $.ajax({
         type: 'POST',
@@ -155,7 +165,7 @@ function getAllContent() {
 //haven't let the pic show on page!
 //upload function
 $('#uploadBtn').click(function () {
-    formdata = new FormData();
+    let formdata = new FormData();
     formdata.append('image',$('#uploadFileInput')[0].files[0]);
     formdata.append('imageLabel',$('#imageLabel').value);
     formdata.append('description',$('#description').value);

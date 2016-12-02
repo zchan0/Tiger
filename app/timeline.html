@@ -29,11 +29,11 @@
     </div>
       </nav>
 
-    <div class="container" id="gridContainer">
+    <div class="container">
       <div class="tab-content">
 
       <div role="tabpanel" class="tab-pane active" id="panel-1">
-        <div class="row masonry-container">
+        <div class="row masonry-container" id="gridContainer">
 
           <div class="col-md-4 col-sm-6 item">
             <div class="thumbnail">
@@ -149,19 +149,21 @@
                     <h4 class="modal-title">Upload</h4>
                 </div>
                 <div class="modal-body">
-                    //upload image
+                    <!-- upload image -->
                     <h3>Input image file path</h3>
                     <input id="uploadFileInput" type="file" size="45" name="uploadFileInput" class="input"/>
 
-                    //input label
+                    <!--input label-->
                     <h3>Image Label</h3>
                     <input id="imageLabel" type="text" class="input"/>
 
-                    //input description
+                    <!--input description-->
                     <h3>Description</h3>
-                    <textarea id="description" rows="6" cols="50"/>
+                    <textarea  id="description" rows="6" cols="50">
 
-                    //when waiting for uploading, show this pic!
+                    </textarea>
+
+                    <!--when waiting for uploading, show this pic!-->
                     <img id="loading" src="loading.gif" style="display:none;">
 
                 </div>
