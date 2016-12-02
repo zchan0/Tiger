@@ -60,22 +60,13 @@ $('#logoutBtn').click(function () {
     });
 });
 
-//delete content function
-$('#deleteBtn').click(function () {
-    var content = this.parentNode.parentNode.parentNode.parentNode;
-    var container = content.parentNode;
-    container.removeChild(content);
-
-    //need to connnect to server!
-});
-
 //get init data function
 function getAllContent() {
     var data = {
         start: 0,
         pagesize: 10
     };
-    data = data.serialize();
+    data = JSON.stringify(data);
 
     $.ajax({
         type: 'POST',
@@ -154,10 +145,21 @@ function getAllContent() {
     });
 }
 
+//delete item function
+function deleteItem(button) {
+    var content = button.parentNode.parentNode.parentNode.parentNode;
+    console.log('this element:', content.id.value);
+    var container = content.parentNode;
+    console.log('this container:', container);
+    container.removeChild(content);
+
+    //need to connnect to server!
+}
+
 //haven't let the pic show on page!
 //upload function
 $('#uploadBtn').click(function () {
-    formdata = new FormData();
+    var formdata = new FormData();
     formdata.append('image', $('#uploadFileInput')[0].files[0]);
     formdata.append('imageLabel', $('#imageLabel').value);
     formdata.append('description', $('#description').value);
@@ -166,7 +168,7 @@ $('#uploadBtn').click(function () {
         url: 'content/publish.json',
         type: 'POST',
         cache: false,
-        data: data,
+        data: formdata,
         processData: false,
         contentType: false,
         success: function success(resultsData, status) {
