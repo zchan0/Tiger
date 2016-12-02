@@ -59,17 +59,11 @@ $('#logoutBtn').click(function () {
 });
 
 //delete content function
-<<<<<<< HEAD
-$('#deleteBtn').click(function() {
-    var content = this.parentNode.parentNode.parentNode.parentNode;
-    var container = content.parentNode;
-=======
 $('#deleteBtn').click(function(){
     let content = this.parentNode.parentNode.parentNode.parentNode;
     console.log('this element:',content.id.value);
     let container = content.parentNode;
     console.log('this container:',container);
->>>>>>> fix some bugs
     container.removeChild(content);
 
     //need to connnect to server!
