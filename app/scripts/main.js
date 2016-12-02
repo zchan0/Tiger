@@ -59,7 +59,7 @@ $('#logoutBtn').click(function () {
 });
 
 //delete content function
-$('#deleteBtn').click(function(){
+function delete(this){
     let content = this.parentNode.parentNode.parentNode.parentNode;
     console.log('this element:',content.id.value);
     let container = content.parentNode;
@@ -67,11 +67,9 @@ $('#deleteBtn').click(function(){
     container.removeChild(content);
 
     //need to connnect to server!
-})
+}
 
 //get init data function
-function getAllContent() {
-    var data = {
 function getAllContent(){
     let data = {
         start:0,
@@ -168,7 +166,7 @@ $('#uploadBtn').click(function () {
         url: 'content/publish.json',
         type: 'POST',
         cache: false,
-        data: data,
+        data: formdata,
         processData: false,
         contentType: false,
         success: function(resultsData, status) {
