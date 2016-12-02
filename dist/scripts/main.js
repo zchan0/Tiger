@@ -67,6 +67,7 @@ function getAllContent() {
         pagesize: 10
     };
     data = JSON.stringify(data);
+    console.log('data:', data);
 
     $.ajax({
         type: 'POST',
@@ -79,6 +80,7 @@ function getAllContent() {
                 console.log('batchquery success');
                 var myContents = results.myContents;
                 var document = document.getElementById('container');
+                console.log('mycontents', myContents);
                 for (i = 0; i < contents.length; i++) {
                     //element i
                     var _contents = myContents[i];
