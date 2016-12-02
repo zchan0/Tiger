@@ -44,7 +44,7 @@ $('#loginBtn').click(function () {
 
 //logout function
 $('#logoutBtn').click(function () {
-    var login = $.ajax({
+    var logout = $.ajax({
         type: 'POST',
         dataType: 'JSON',
         url: 'user/logout.json',
@@ -94,57 +94,57 @@ function getAllContent() {
 
                     //basic set of DOM!
                     var item = document.createElement('div');
-                    item.setAttribute("class", "col-md-4 col-sm-6 item");
+                    item.setAttribute('class', 'col-md-4 col-sm-6 item');
 
                     var thumbnail = document.createElement('div');
-                    thumbnail.setAttribute("class", "thumbnail");
+                    thumbnail.setAttribute('class', 'thumbnail');
 
                     var image = document.createElement('img');
-                    image.setAttribute("alt", "");
+                    image.setAttribute('alt', '');
 
                     var caption = document.createElement('div');
-                    caption.setAttribute("class", "caption");
+                    caption.setAttribute('class', 'caption');
 
                     var h3 = document.createElement('h3');
                     var p1 = document.createElement('p');
                     var p2 = document.createElement('p');
 
                     var a1 = document.createElement('a');
-                    a1.setAttribute("href", "#");
-                    a1.setAttribute("class", "btn btn-default");
-                    a1.setAttribute("role", "button");
-                    a1.setAttribute("id", "selectBtn");
-                    a1.innerHTML = "select";
+                    a1.setAttribute('href', '#');
+                    a1.setAttribute('class', 'btn btn-default');
+                    a1.setAttribute('role', 'button');
+                    a1.setAttribute('id', 'selectBtn');
+                    a1.innerHTML = 'select';
                     p2.appendChild(a);
 
                     var a2 = document.createElement('a');
-                    a1.setAttribute("href", "#");
-                    a1.setAttribute("class", "btn btn-alert");
-                    a1.setAttribute("role", "button");
-                    a1.setAttribute("id", "deleteBtn");
-                    a1.innerHTML = "select";
-                    a2.innerHTML = "button";
+                    a1.setAttribute('href', '#');
+                    a1.setAttribute('class', 'btn btn-alert');
+                    a1.setAttribute('role', 'button');
+                    a1.setAttribute('id', 'deleteBtn');
+                    a1.innerHTML = 'select';
+                    a2.innerHTML = 'button';
                     p2.appendChild(a);
                     //end of basic set of DOM!
 
                     //start to input contents to DOM!
                     p1.innerHTML = _contents.contents[0].text;
-                    h3.innerHTML = "Label";
+                    h3.innerHTML = 'Label';
 
                     caption.appendChild(h3);
                     caption.appendChild(p1);
                     caption.appendChild(p2);
 
-                    image.setAttribute("src", _contents.contents[0].picName);
+                    image.setAttribute('src', _contents.contents[0].picName);
 
                     thumbnail.appendChild(image);
                     thumbnail.appendChild(caption);
 
                     item.appendChild(thumbnail);
-                    item.setAttribute("id", _contents.id);
+                    item.setAttribute('id', _contents.id);
                     //end of input contents to DOM!
 
-                    document.getElementById("gridContainer").appendChild(item);
+                    document.getElementById('gridContainer').appendChild(item);
                 }
             } else if (results.success === 'false') {
                 console.log('batchquery failure');
@@ -185,7 +185,7 @@ $('#uploadBtn').click(function () {
 });
 
 //show modal uploading function
-$("#loading").ajaxStart(function () {
+$('#loading').ajaxStart(function () {
     $(this).show();
 }) //when uploading images, show the icon
 .ajaxComplete(function () {

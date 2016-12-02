@@ -42,7 +42,7 @@ $('#loginBtn').click(function () {
 
 //logout function
 $('#logoutBtn').click(function () {
-	 let login = $.ajax({
+	 let logout = $.ajax({
 	 	type: 'POST',
 	 	dataType: 'JSON',
 	 	url: 'user/logout.json',
@@ -59,7 +59,7 @@ $('#logoutBtn').click(function () {
 });
 
 //delete content function
-$('#deleteBtn').click(function(){
+$('#deleteBtn').click(function() {
     var content = this.parentNode.parentNode.parentNode.parentNode;
     var container = content.parentNode;
     container.removeChild(content);
@@ -68,7 +68,7 @@ $('#deleteBtn').click(function(){
 })
 
 //get init data function
-function getAllContent(){
+function getAllContent() {
     var data = {
         start:0,
         pagesize:10
