@@ -12,24 +12,24 @@
     <!-- build:css styles/main.css -->
     <link rel="stylesheet" href="styles/main.css">
     <!-- endbuild -->
-    <body>
+    <body onload=getAllContent()>
 
     <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-    <div class="container">
+    <div class="container" >
       <div class="navbar-header">
         <a class="navbar-brand">ShareBot</a>
       </div>
       <form class="navbar-form navbar-right" role="form">
         <div class="form-group">
-          <button type="button" class="btn btn-large btn-info" id="shareBtn">Share</button>
-          <button type="button" class="btn btn-large btn-success" id="uploadBtn">Upload</button>
+            <button type="button" class="btn btn-large btn-info" id="shareBtn">Share</button>
+            <button type="button" class="btn btn-large btn-success" id="uploadBtn" data-toggle="modal" data-target="#uploadModal">Upload</button>
           <button type="button" class="btn btn-large btn-default" id="logoutBtn">Logout</button>
         </div>
       </form>
     </div>
       </nav>
 
-    <div class="container">
+    <div class="container" id="gridContainer">
       <div class="tab-content">
 
       <div role="tabpanel" class="tab-pane active" id="panel-1">
@@ -135,6 +135,41 @@
     <!-- build:js scripts/main.js -->
     <script src="scripts/main.js"></script>
     <!-- endbuild -->
+
+    <!-- Modal -->
+    <div id="uploadModal" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-lg">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" id="closeModal">&times;</button>
+                    <h4 class="modal-title">Upload</h4>
+                </div>
+                <div class="modal-body">
+                    //upload image
+                    <h3>Input image file path</h3>
+                    <input id="uploadFileInput" type="file" size="45" name="uploadFileInput" class="input"/>
+
+                    //input label
+                    <h3>Image Label</h3>
+                    <input id="imageLabel" type="text" class="input"/>
+
+                    //input description
+                    <h3>Description</h3>
+                    <textarea id="description" rows="6" cols="50"/>
+
+                    //when waiting for uploading, show this pic!
+                    <img id="loading" src="loading.gif" style="display:none;">
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" id="uploadBtn">Upload</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
 
     </body>
 </html>
