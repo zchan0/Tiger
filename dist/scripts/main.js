@@ -31,19 +31,29 @@ $('#loginBtn').click(function () {
 		success: function success(resultsData, status) {
 			var results = JSON.parse(resultsData);
 			if (results.success === 'true') {
-				console.log('login success');
+				console.log(results);
 				window.location.href = 'timeline.html';
 			} else if (results.success === 'false') {
-				console.log('login failure');
+				console.log('login failed');
+				// show login error message
+				$('#alertDiv').removeClass('hidden');
 			}
 		}
 	});
 });
 
+$('#signupForm').validate();
+$('#loginForm').validate();
+
+// dismiss login error message
+$('#alertDiv').click(function () {
+	$(this).addClass('hidden');
+});
+
 (function ($) {
 
 	var $container = $('.masonry-container');
-	$container.imagesLoaded(function () {
+	$container.imagesLoaded().progress(function () {
 		$container.masonry({
 			columnWidth: '.item',
 			itemSelector: '.item'
@@ -56,7 +66,7 @@ $('#loginBtn').click(function () {
 
 		$this.on('shown.bs.tab', function () {
 
-			$container.imagesLoaded(function () {
+			$container.imagesLoaded().progress(function () {
 				$container.masonry({
 					columnWidth: '.item',
 					itemSelector: '.item'

@@ -29,10 +29,12 @@ $('#loginBtn').click(function () {
 	 	success: function(resultsData, status) {
 	 		let results = JSON.parse(resultsData);
 	 		if (results.success === 'true') {
-	 			console.log('login success');
+	 			console.log(results);
 	 			window.location.href = 'timeline.html';
 	 		} else if (results.success === 'false') {
-	 			console.log('login failure');
+	 			console.log('login failed');
+	 			// show login error message
+				$('#alertDiv').removeClass('hidden');
 	 		}
 	 	}
 	 });
@@ -190,6 +192,11 @@ $("#loading")
     });//hide it when uploaded.
 $('#signupForm').validate();
 $('#loginForm').validate();
+
+// dismiss login error message
+$('#alertDiv').click(function () {
+	 $(this).addClass('hidden');
+});
 
 (function( $ ) {
 
