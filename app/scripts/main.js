@@ -58,6 +58,13 @@ $('#logoutBtn').click(function () {
 	 });
 });
 
+//container
+var $container = $('#gridContainer');
+$container.masonry({
+    ifFitWidth: true,
+    itemSelector: '.col-md-4 col-sm-6 item',
+    isAnimated: true
+});
 
 //get init data function
 function getAllContent(){
@@ -77,12 +84,6 @@ function getAllContent(){
             console.log('myContents',results.myContents);
             console.log('results',results);
 
-            //container
-            let $container = $('#gridContainer');
-            $container.masonry({
-                ifFitWidth: true,
-                itemSelector: '.col-md-4 col-sm-6 item'
-            });
 
             if (results.success === 'true') {
                 console.log('batchquery success');
@@ -90,12 +91,12 @@ function getAllContent(){
                 let myContents = results.myContents;
                 console.log('mycontents',myContents);
 
-                for(i=0;i<myContents.length;i++){
+                for(var i=0;i<myContents.length;i++){
                     //element i
                     let contents = myContents[i];
                     console.log('contents',contents);
 
-                    for(j=0;j<contents.contents.length;j++){
+                    for(var j=0;j<contents.contents.length;j++){
 
                         //element of share i
                         let item = document.createElement('div');
