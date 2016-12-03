@@ -63,6 +63,7 @@ $('#logoutBtn').click(function () {
 // share
 $('#shareBtn').click(function () {
     var selectedItemID = getSelectedItemID();
+    var username = $('#logoutBtn').data('username');
     $.ajax({
         url: 'content/share.json',
         type: 'POST',
@@ -74,8 +75,9 @@ $('#shareBtn').click(function () {
         if (results.success === 'true') {
             var host = $(location).attr('hostname');
             var protocol = $(location).attr('protocol');
-            var username = "test";
-            $('#shareURLForm').val(protocol + '//' + host + '/?username=' + username + '&id=' + results.id);
+            var port = $(location).attr('port');
+            var path = '/yolk/share.html';
+            $('#shareURLForm').val(protocol + '//' + host + ':' + port + path + '?username=' + username + '&id=' + results.id);
             $('#shareModal').modal('toggle');
         } else if (results.success === 'false') {
             console.log('share failed');
@@ -89,11 +91,7 @@ function getSelectedItemID() {
 
 //get init data function
 function getAllContent() {
-    var data = {
-        start: '0',
-        pagesize: '10'
-    };
-    data = JSON.stringify(data);
+    var data = 'start=0&pagesize=10';
     console.log('data:', data);
 
     $.ajax({
@@ -102,69 +100,109 @@ function getAllContent() {
         dataType: 'JSON',
         url: 'content/batchquery.json',
         success: function success(resultsData, status) {
+            console.log('jsonstring', resultsData);
+
             var results = JSON.parse(resultsData);
+            console.log('success', results.success);
+            console.log('myContents', results.myContents);
+            console.log('results', results);
+
+            //container
+            var $container = $('#gridContainer');
+            $container.masonry({
+                ifFitWidth: true,
+                itemSelector: '.col-md-4 col-sm-6 item'
+            });
+
             if (results.success === 'true') {
                 console.log('batchquery success');
+
                 var myContents = results.myContents;
-                var document = document.getElementById('container');
                 console.log('mycontents', myContents);
-                for (i = 0; i < contents.length; i++) {
+
+                var uname = myContents[0].sharedByUsername;
+
+                // store username in logout button for later use
+                $('#logoutBtn').data('username', uname);
+
+                for (var i = 0; i < myContents.length; i++) {
                     //element i
-                    var _contents = myContents[i];
+                    var contents = myContents[i];
+                    console.log('contents', contents);
 
+                    for (var j = 0; j < contents.contents.length; j++) {
+
+                        //element of share i
+                        var item = document.createElement('div');
+                        item.setAttribute('class', 'col-md-4 col-sm-6 item');
+
+                        var thumbnail = document.createElement('div');
+                        thumbnail.setAttribute('class', 'thumbnail');
+
+                        var caption = document.createElement('div');
+                        caption.setAttribute('class', 'caption');
+
+                        var h3 = document.createElement('h3');
+                        var p1 = document.createElement('p');
+                        var p2 = document.createElement('p');
+
+                        var a1 = document.createElement('a');
+                        a1.setAttribute('href', '#');
+                        a1.setAttribute('class', 'btn btn-default');
+                        a1.setAttribute('role', 'button');
+                        a1.setAttribute('id', 'selectBtn');
+                        a1.innerHTML = 'select';
+                        p2.appendChild(a1);
+
+                        var a2 = document.createElement('a');
+                        a2.setAttribute('href', '#');
+                        a2.setAttribute('class', 'btn btn-danger');
+                        a2.setAttribute('role', 'button');
+                        a2.setAttribute('id', 'deleteBtn');
+                        a2.innerHTML = 'select';
+                        a2.innerHTML = 'button';
+                        p2.appendChild(a2);
+                        //end of basic set of DOM!
+
+                        //start to input contents to DOM!
+                        p1.innerHTML = contents.contents[j].text;
+                        h3.innerHTML = 'Description';
+
+                        caption.appendChild(h3);
+                        caption.appendChild(p1);
+                        caption.appendChild(p2);
+
+                        //if has picture, add img element!
+                        if (contents.contents[j].hasOwnProperty('picName')) {
+                            console.log('have picture');
+                            var image = document.createElement('img');
+                            image.setAttribute('alt', '');
+                            var src = '/yolk/pic/download.json?username=' + contents.sharedByUsername + '&fileName=' + contents.contents[j].picName;
+                            image.setAttribute('src', src);
+
+                            thumbnail.appendChild(image);
+                        } else {
+                            console.log('don\'t have image');
+                        }
+                        //end of adding img
+
+                        thumbnail.appendChild(caption);
+                        item.appendChild(thumbnail);
+                        item.setAttribute('id', contents.id);
+                        //end of input contents to DOM!
+
+                        //use masonry to add new item
+                        $container.masonry().append(item).masonry('appended', item);
+                    }
                     //basic set of DOM!
-                    var item = document.createElement('div');
-                    item.setAttribute('class', 'col-md-4 col-sm-6 item');
 
-                    var thumbnail = document.createElement('div');
-                    thumbnail.setAttribute('class', 'thumbnail');
-
-                    var image = document.createElement('img');
-                    image.setAttribute('alt', '');
-
-                    var caption = document.createElement('div');
-                    caption.setAttribute('class', 'caption');
-
-                    var h3 = document.createElement('h3');
-                    var p1 = document.createElement('p');
-                    var p2 = document.createElement('p');
-
-                    var a1 = document.createElement('a');
-                    a1.setAttribute('href', '#');
-                    a1.setAttribute('class', 'btn btn-default');
-                    a1.setAttribute('role', 'button');
-                    a1.setAttribute('id', 'selectBtn');
-                    a1.innerHTML = 'select';
-                    p2.appendChild(a);
-
-                    var a2 = document.createElement('a');
-                    a1.setAttribute('href', '#');
-                    a1.setAttribute('class', 'btn btn-alert');
-                    a1.setAttribute('role', 'button');
-                    a1.setAttribute('id', 'deleteBtn');
-                    a1.innerHTML = 'select';
-                    a2.innerHTML = 'button';
-                    p2.appendChild(a);
-                    //end of basic set of DOM!
-
-                    //start to input contents to DOM!
-                    p1.innerHTML = _contents.contents[0].text;
-                    h3.innerHTML = 'Label';
-
-                    caption.appendChild(h3);
-                    caption.appendChild(p1);
-                    caption.appendChild(p2);
-
-                    image.setAttribute('src', _contents.contents[0].picName);
-
-                    thumbnail.appendChild(image);
-                    thumbnail.appendChild(caption);
-
-                    item.appendChild(thumbnail);
-                    item.setAttribute('id', _contents.id);
-                    //end of input contents to DOM!
-
-                    document.getElementById('gridContainer').appendChild(item);
+                    //add a divider of each share. not working???
+                    var ul = document.createElement('ul');
+                    ul.setAttribute('class', 'nav nav-list');
+                    var divider = document.createElement('li');
+                    divider.setAttribute('class', 'divider');
+                    ul.appendChild(divider);
+                    $container.masonry().append(ul).masonry('appended', ul);
                 }
             } else if (results.success === 'false') {
                 console.log('batchquery failure');

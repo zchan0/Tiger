@@ -69,6 +69,7 @@ $container.masonry({
 // share
 $('#shareBtn').click(function() {
     let selectedItemID = getSelectedItemID();
+    let username = $('#logoutBtn').data('username');
     $.ajax({
         url: 'content/share.json',
         type: 'POST',
@@ -81,8 +82,9 @@ $('#shareBtn').click(function() {
         if (results.success === 'true') {
             let host = $(location).attr('hostname');
             let protocol = $(location).attr('protocol');
-            let username = 'test';
-            $('#shareURLForm').val(protocol + '//' + host + '/?username=' + username + '&id=' + results.id);
+            let port = $(location).attr('port');
+            let path = '/yolk/share.html';
+            $('#shareURLForm').val(protocol + '//' + host + ':' + port + path +  '?username=' + username + '&id=' + results.id);
             $('#shareModal').modal('toggle');
         }
         else if (results.success === 'false') {
@@ -113,19 +115,23 @@ function getAllContent(){
             console.log('myContents',results.myContents);
             console.log('results',results);
 
-
             if (results.success === 'true') {
                 console.log('batchquery success');
 
                 let myContents = results.myContents;
                 console.log('mycontents',myContents);
+                
+                let uname = myContents[0].sharedByUsername;
 
-                for(var i=0;i<myContents.length;i++){
+                // store username in logout button for later use
+                $('#logoutBtn').data('username', uname);
+
+                for(let i = 0; i < myContents.length; i++) {
                     //element i
                     let contents = myContents[i];
                     console.log('contents',contents);
 
-                    for(var j=0;j<contents.contents.length;j++){
+                    for(let j = 0; j < contents.contents.length; j++) {
 
                         //element of share i
                         let item = document.createElement('div');
@@ -178,7 +184,7 @@ function getAllContent(){
                             thumbnail.appendChild(image);
                         }
                         else{
-                            console.log("don't have image");
+                            console.log('don\'t have image');
                         }
                         //end of adding img
 
