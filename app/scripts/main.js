@@ -20,25 +20,42 @@ $('#signupBtn').click(function () {
 });
 
 $('#loginBtn').click(function () {
-	 let data  = $('form').serialize();
-	 let login = $.ajax({
-	 	type: 'POST',
-	 	data: data,
-	 	dataType: 'JSON',
-	 	url: 'user/login.json',
-	 	success: function(resultsData, status) {
-	 		let results = JSON.parse(resultsData);
-	 		if (results.success === 'true') {
-	 			console.log(results);
-	 			window.location.href = 'timeline.html';
-	 		} else if (results.success === 'false') {
-	 			console.log('login failed');
-	 			// show login error message
-				$('#alertDiv').removeClass('hidden');
-	 		}
-	 	}
-	 });
+    let data  = $('form').serialize();
+    let login = $.ajax({
+        type: 'POST',
+        data: data,
+        dataType: 'JSON',
+        url: 'user/login.json',
+        success: function(resultsData, status) {
+        	let results = JSON.parse(resultsData);
+        	if (results.success === 'true') {
+        		console.log(results);
+        		window.location.href = 'timeline.html';
+                rememberPassword();
+        	} else if (results.success === 'false') {
+        		console.log('login failed');
+        		// show login error message
+        	$('#alertDiv').removeClass('hidden');
+        	}
+        }
+    });
 });
+
+function rememberPassword() {
+    if ($('#remember').is(':checked')) {
+        var username = $('#username').val();
+        var password = $('#password').val();
+        // set cookies to expire in 14 days
+        Cookies.set('username', username, { expires: 14 });
+        Cookies.set('password', password, { expires: 14 });
+        Cookies.set('remember', true, { expires: 14 });                
+    } else {
+        // reset cookies
+        Cookies.set('username', null);
+        Cookies.set('password', null);
+        Cookies.set('remember', null);
+    }
+}
 
 //logout function
 $('#logoutBtn').click(function () {
@@ -56,6 +73,18 @@ $('#logoutBtn').click(function () {
 	 		}
 	 	}
 	 });
+});
+
+$(document).ready(function() {
+    var remember = Cookies.get('remember');
+    if (remember === 'true') {
+        var username = Cookies.get('username');
+        var password = Cookies.get('password');
+        // autofill the fields
+        $('#username').val(username);
+        $('#password').val(password);
+        $('#remember').prop('checked', true);
+    }
 });
 
 //container
@@ -138,7 +167,7 @@ function createShareContentDOM(shareContent) {
         let contents = shareContent[i].contents;
         for (let j = contents.length - 1; j >= 0; j--) {
             let content = contents[i];
-            let src = '/yolk/pic/download.json?username=' + username + '&fileName='+ content.picName;
+            let src = 'pic/download.json?username=' + username + '&fileName='+ content.picName;
             let img = $('<img>', {
                 src: src,
             });

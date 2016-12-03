@@ -33,6 +33,7 @@ $('#loginBtn').click(function () {
             if (results.success === 'true') {
                 console.log(results);
                 window.location.href = 'timeline.html';
+                rememberPassword();
             } else if (results.success === 'false') {
                 console.log('login failed');
                 // show login error message
@@ -41,6 +42,22 @@ $('#loginBtn').click(function () {
         }
     });
 });
+
+function rememberPassword() {
+    if ($('#remember').is(':checked')) {
+        var username = $('#username').val();
+        var password = $('#password').val();
+        // set cookies to expire in 14 days
+        Cookies.set('username', username, { expires: 14 });
+        Cookies.set('password', password, { expires: 14 });
+        Cookies.set('remember', true, { expires: 14 });
+    } else {
+        // reset cookies
+        Cookies.set('username', null);
+        Cookies.set('password', null);
+        Cookies.set('remember', null);
+    }
+}
 
 //logout function
 $('#logoutBtn').click(function () {
@@ -58,6 +75,18 @@ $('#logoutBtn').click(function () {
             }
         }
     });
+});
+
+$(document).ready(function () {
+    var remember = Cookies.get('remember');
+    if (remember === 'true') {
+        var username = Cookies.get('username');
+        var password = Cookies.get('password');
+        // autofill the fields
+        $('#username').val(username);
+        $('#password').val(password);
+        $('#remember').prop('checked', true);
+    }
 });
 
 //container
@@ -136,7 +165,7 @@ function createShareContentDOM(shareContent) {
         var contents = shareContent[i].contents;
         for (var j = contents.length - 1; j >= 0; j--) {
             var content = contents[i];
-            var src = '/yolk/pic/download.json?username=' + username + '&fileName=' + content.picName;
+            var src = 'pic/download.json?username=' + username + '&fileName=' + content.picName;
             var img = $('<img>', {
                 src: src
             });
