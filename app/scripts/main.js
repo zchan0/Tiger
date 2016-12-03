@@ -94,7 +94,71 @@ $('#shareBtn').click(function() {
 });
 
 function getSelectedItemID() {
-    return 2500;
+    return 5870;
+}
+
+function loadShareContent() {
+    let ids = $.urlParam('id');
+    $.ajax({
+        url: 'content/query.json',
+        type: 'POST',
+        dataType: 'JSON',
+        data: {id: ids},
+    })
+    .done(function(resultsData, textStatus, jqXHR) {
+        console.log(resultsData);
+        if (results.success === 'true') {
+            let results = $.parseJSON(resultsData);
+            let contents = results.shareContent;
+            createShareContentDOM(contents);
+        }
+        else if (results.success === 'false') {
+            console.log('load content failed');
+        }
+    })
+}
+
+function createShareContentDOM(shareContent) {
+    // [username] share to you
+    let username = shareContent[0].sharedByUsername;
+    let a = $('<a></a>', {
+            href: '#',
+            text: username,
+            });
+    let p = $('<p></p>', {
+        'class' : 'lead share-user',
+        text : ' share to you',
+    }).prepend(a);
+    let hr = $('<hr>');
+
+    $('#shareContainer').append(p, hr);
+
+    // img + text
+    for (let i = shareContent.length - 1; i >= 0; i--) {
+        let contents = shareContent[i].contents;
+        for (let j = contents.length - 1; j >= 0; j--) {
+            let content = contents[i];
+            let src = '/yolk/pic/download.json?username=' + username + '&fileName='+ content.picName;
+            let img = $('<img>', {
+                src: src,
+            });
+            let text = $('<p></p>', {
+                'class': 'lead',
+                text: content.text,
+            });
+            $('#shareContainer').append(img, text);
+        }
+    }
+
+    // footer
+    let footerText = $('<p></p>', {
+        'class': 'pull-right',
+        text: '❤️  from the Yolk team',
+    });
+    let footer = $('<div></div>', {
+        'class': 'footer',
+    }).append(footerText);
+    $('#shareContainer').append(footer);
 }
 
 //get init data function
@@ -269,6 +333,17 @@ $('#loading')
 $('#alertDiv').click(function () {
      $(this).addClass('hidden');
 });
+
+/** Helpers */
+$.urlParam = function(name) {
+    var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+    if (results == null){
+       return null;
+    }
+    else{
+       return results[1] || 0;
+    }
+}
 
 /** Plugin methods */
 

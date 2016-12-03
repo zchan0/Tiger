@@ -60,6 +60,14 @@ $('#logoutBtn').click(function () {
     });
 });
 
+//container
+var $container = $('#gridContainer');
+$container.masonry({
+    ifFitWidth: true,
+    itemSelector: '.col-md-4 col-sm-6 item',
+    isAnimated: true
+});
+
 // share
 $('#shareBtn').click(function () {
     var selectedItemID = getSelectedItemID();
@@ -86,7 +94,69 @@ $('#shareBtn').click(function () {
 });
 
 function getSelectedItemID() {
-    return 2500;
+    return 5870;
+}
+
+function loadShareContent() {
+    var ids = $.urlParam('id');
+    $.ajax({
+        url: 'content/query.json',
+        type: 'POST',
+        dataType: 'JSON',
+        data: { id: ids }
+    }).done(function (resultsData, textStatus, jqXHR) {
+        console.log(resultsData);
+        if (results.success === 'true') {
+            var _results = $.parseJSON(resultsData);
+            var contents = _results.shareContent;
+            createShareContentDOM(contents);
+        } else if (results.success === 'false') {
+            console.log('load content failed');
+        }
+    });
+}
+
+function createShareContentDOM(shareContent) {
+    // [username] share to you
+    var username = shareContent[0].sharedByUsername;
+    var a = $("<a></a>", {
+        href: "#",
+        text: username
+    });
+    var p = $("<p></p>", {
+        "class": "lead share-user",
+        text: " share to you"
+    }).prepend(a);
+    var hr = $("<hr>");
+
+    $('#shareContainer').append(p, hr);
+
+    // img + text
+    for (var i = shareContent.length - 1; i >= 0; i--) {
+        var contents = shareContent[i].contents;
+        for (var j = contents.length - 1; j >= 0; j--) {
+            var content = contents[i];
+            var src = '/yolk/pic/download.json?username=' + username + '&fileName=' + content.picName;
+            var img = $("<img>", {
+                src: src
+            });
+            var text = $("<p></p>", {
+                "class": "lead",
+                text: content.text
+            });
+            $('#shareContainer').append(img, text);
+        }
+    }
+
+    // footer
+    var footerText = $("<p></p>", {
+        "class": "pull-right",
+        text: "❤️  from the Yolk team"
+    });
+    var footer = $("<div></div>", {
+        "class": "footer"
+    }).append(footerText);
+    $('#shareContainer').append(footer);
 }
 
 //get init data function
@@ -106,13 +176,6 @@ function getAllContent() {
             console.log('success', results.success);
             console.log('myContents', results.myContents);
             console.log('results', results);
-
-            //container
-            var $container = $('#gridContainer');
-            $container.masonry({
-                ifFitWidth: true,
-                itemSelector: '.col-md-4 col-sm-6 item'
-            });
 
             if (results.success === 'true') {
                 console.log('batchquery success');
@@ -265,6 +328,16 @@ $('#loading').ajaxStart(function () {
 $('#alertDiv').click(function () {
     $(this).addClass('hidden');
 });
+
+/** Helpers */
+$.urlParam = function (name) {
+    var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+    if (results == null) {
+        return null;
+    } else {
+        return results[1] || 0;
+    }
+};
 
 /** Plugin methods */
 
