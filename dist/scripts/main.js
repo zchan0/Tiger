@@ -119,15 +119,15 @@ function loadShareContent() {
 function createShareContentDOM(shareContent) {
     // [username] share to you
     var username = shareContent[0].sharedByUsername;
-    var a = $("<a></a>", {
-        href: "#",
+    var a = $('<a></a>', {
+        href: '#',
         text: username
     });
-    var p = $("<p></p>", {
-        "class": "lead share-user",
-        text: " share to you"
+    var p = $('<p></p>', {
+        'class': 'lead share-user',
+        text: ' share to you'
     }).prepend(a);
-    var hr = $("<hr>");
+    var hr = $('<hr>');
 
     $('#shareContainer').append(p, hr);
 
@@ -137,11 +137,11 @@ function createShareContentDOM(shareContent) {
         for (var j = contents.length - 1; j >= 0; j--) {
             var content = contents[i];
             var src = '/yolk/pic/download.json?username=' + username + '&fileName=' + content.picName;
-            var img = $("<img>", {
+            var img = $('<img>', {
                 src: src
             });
-            var text = $("<p></p>", {
-                "class": "lead",
+            var text = $('<p></p>', {
+                'class': 'lead',
                 text: content.text
             });
             $('#shareContainer').append(img, text);
@@ -149,12 +149,12 @@ function createShareContentDOM(shareContent) {
     }
 
     // footer
-    var footerText = $("<p></p>", {
-        "class": "pull-right",
-        text: "❤️  from the Yolk team"
+    var footerText = $('<p></p>', {
+        'class': 'pull-right',
+        text: '❤️  from the Yolk team'
     });
-    var footer = $("<div></div>", {
-        "class": "footer"
+    var footer = $('<div></div>', {
+        'class': 'footer'
     }).append(footerText);
     $('#shareContainer').append(footer);
 }
