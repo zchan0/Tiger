@@ -66,6 +66,35 @@ $container.masonry({
     isAnimated: true
 });
 
+// share
+$('#shareBtn').click(function() {
+    let selectedItemID = getSelectedItemID();
+    $.ajax({
+        url: 'content/share.json',
+        type: 'POST',
+        dataType: 'JSON',
+        data: {id: selectedItemID},
+    })
+    .done(function(resultsData, textStatus, jqXHR) {
+        console.log(resultsData);
+        let results = $.parseJSON(resultsData);
+        if (results.success === 'true') {
+            let host = $(location).attr('hostname');
+            let protocol = $(location).attr('protocol');
+            let username = 'test';
+            $('#shareURLForm').val(protocol + '//' + host + '/?username=' + username + '&id=' + results.id);
+            $('#shareModal').modal('toggle');
+        }
+        else if (results.success === 'false') {
+            console.log('share failed');
+        }
+    })
+});
+
+function getSelectedItemID() {
+    return 2500;
+}
+
 //get init data function
 function getAllContent(){
     let data = 'start=0&pagesize=10';
@@ -229,13 +258,16 @@ $('#loading')
     .ajaxComplete(function () {
         $(this).hide();
     });//hide it when uploaded.
-$('#signupForm').validate();
-$('#loginForm').validate();
 
 // dismiss login error message
 $('#alertDiv').click(function () {
-	 $(this).addClass('hidden');
+     $(this).addClass('hidden');
 });
+
+/** Plugin methods */
+
+$('#signupForm').validate();
+$('#loginForm').validate();
 
 (function( $ ) {
 	var $container = $('.masonry-container');

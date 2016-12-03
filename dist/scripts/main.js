@@ -60,11 +60,38 @@ $('#logoutBtn').click(function () {
     });
 });
 
+// share
+$('#shareBtn').click(function () {
+    var selectedItemID = getSelectedItemID();
+    $.ajax({
+        url: 'content/share.json',
+        type: 'POST',
+        dataType: 'JSON',
+        data: { id: selectedItemID }
+    }).done(function (resultsData, textStatus, jqXHR) {
+        console.log(resultsData);
+        var results = $.parseJSON(resultsData);
+        if (results.success === 'true') {
+            var host = $(location).attr('hostname');
+            var protocol = $(location).attr('protocol');
+            var username = "test";
+            $('#shareURLForm').val(protocol + '//' + host + '/?username=' + username + '&id=' + results.id);
+            $('#shareModal').modal('toggle');
+        } else if (results.success === 'false') {
+            console.log('share failed');
+        }
+    });
+});
+
+function getSelectedItemID() {
+    return 2500;
+}
+
 //get init data function
 function getAllContent() {
     var data = {
-        start: 0,
-        pagesize: 10
+        start: '0',
+        pagesize: '10'
     };
     data = JSON.stringify(data);
     console.log('data:', data);
@@ -195,13 +222,16 @@ $('#loading').ajaxStart(function () {
 .ajaxComplete(function () {
     $(this).hide();
 }); //hide it when uploaded.
-$('#signupForm').validate();
-$('#loginForm').validate();
 
 // dismiss login error message
 $('#alertDiv').click(function () {
     $(this).addClass('hidden');
 });
+
+/** Plugin methods */
+
+$('#signupForm').validate();
+$('#loginForm').validate();
 
 (function ($) {
     var $container = $('.masonry-container');
