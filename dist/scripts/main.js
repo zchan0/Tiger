@@ -226,6 +226,9 @@ function getAllContent() {
                     var $shareContainer = $('#gridContainer').clone(true);
                     //delete children
                     $shareContainer.empty();
+                    var $origin = $('#origin').clone(true);
+                    $origin.attr('id', contents.id);
+                    $shareContainer.append($origin);
 
                     //give masonry property
                     //                    $shareContainer.imagesLoaded( function() {
@@ -236,7 +239,7 @@ function getAllContent() {
                     //                    });
 
                     if (i === 0) {
-                        $('[role="presentation"]').attr('id', contents.id);
+                        $('.active').attr('id', contents.id);
                         $shareContainer = $('#gridContainer');
                     } else {
                         //create new panel!
@@ -327,11 +330,7 @@ function getAllContent() {
                         //end of input contents to DOM!
 
                         //use masonry to add new item
-                        $shareContainer.masonry({
-                            columnWidth: '.item',
-                            itemSelector: '.item',
-                            initLayout: false
-                        }).append($item).masonry('appended', $item);
+                        $shareContainer.masonry().append($item).masonry('appended', $item);
                     }
                     $shareContainer.masonry('layout');
                     //basic set of DOM!
@@ -347,6 +346,7 @@ function getAllContent() {
             } else if (results.success === 'false') {
                 console.log('batchquery failure');
                 alert('cannot get contents!');
+                window.location.href = '404.html';
             }
         }
     });

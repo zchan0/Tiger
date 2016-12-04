@@ -124,7 +124,7 @@ $('#shareBtn').click(function() {
 });
 
 function getSelectedItemID() {
-    return $('.active').attr('id');
+    return $('[class="active"]').attr('id');
 }
 
 function loadShareContent() {
@@ -242,7 +242,7 @@ function getAllContent(){
 //                    });
 
                     if(i === 0){
-                        $('.active').attr('id',contents.id);
+                        $('[class="active"]').attr('id',contents.id);
                         $shareContainer = $('#gridContainer');
                     }else{
                         //create new panel!
