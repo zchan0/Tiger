@@ -15,59 +15,24 @@
     <body onload=getAllContent()>
 
     <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-    <div class="container" >
-      <div class="navbar-header">
-        <a class="navbar-brand">ShareBot</a>
-      </div>
-      <form class="navbar-form navbar-right" role="form">
-        <div class="form-group">
-            <button type="button" class="btn btn-large btn-info" id="shareBtn">Share</button>
-            <button type="button" class="btn btn-large btn-success" id="showModalBtn" data-toggle="modal" data-target="#uploadModal">Upload</button>
-            <button type="button" class="btn btn-large btn-default" id="logoutBtn">Logout</button>
+      <div class="container" >
+        <div class="navbar-header">
+          <a class="navbar-brand">ShareBot</a>
         </div>
-      </form>
-    </div>
+        <form class="navbar-form navbar-right" role="form">
+          <div class="form-group">
+              <button type="button" class="btn btn-large btn-info" id="shareBtn">Share</button>
+              <button type="button" class="btn btn-large btn-success" id="showModalBtn" data-toggle="modal" data-target="#uploadModal">Upload</button>
+              <button type="button" class="btn btn-large btn-default" id="logoutBtn">Logout</button>
+          </div>
+        </form>
+      </div>
     </nav>
 
-    <div class="container main-container">
-      <div class="tab-content">
-          <div role="tabpanel">
+    <div class="container" id="mainContainer">
 
-              <ul class="nav nav-tabs" role="tablist">
-                  <li role="presentation" class="active">
-                      <a href="#share-1" aria-controls="share-1" role="tab" data-toggle="tab">Share 1</a>
-                  </li>
-              </ul>
+      <div id="loader"></div>
 
-              <!--tab-->
-              <div class="tab-content" id="inputPanelHere">
-              <div role="tabpanel" class="tab-pane active" id="share-1">
-                  <div class="row masonry-container" id="gridContainer">
-
-                      <div class="col-md-4 col-sm-6 item" id="origin">
-                          <div class="thumbnail">
-                              <img id='image' src="http://lorempixel.com/200/200/abstract" alt="">
-                              <div class="caption">
-                                  <h3>Description</h3>
-                                  <p id='description'>This is description of image.</p>
-                                  <p><a href="#" class="btn btn-default" role="button" id="selectBtn">Select</a> <a href="#" class="btn btn-danger" role="button" id="deleteBtn" onclick="deleteItem(this)">Delete</a></p>
-                              </div>
-                          </div>
-                      </div>
-
-                  </div> <!--/.masonry-container  -->
-              </div><!--/.tab-panel -->
-              </div>
-
-          </div>
-
-      </div> <!--/.tab-content -->
-
-    </div> <!-- container -->
-
-    <!--footer-->
-    <div class="footer">
-        <p class="pull-right">❤️  from the Yolk team</p>
     </div>
 
     <!-- build:js scripts/vendor.js -->

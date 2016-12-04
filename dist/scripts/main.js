@@ -89,15 +89,6 @@ $(document).ready(function () {
     }
 });
 
-//container
-//var $container = $('.masonry-container');
-//$container.imagesLoaded( function() {
-//    $container.masonry({
-//        columnWidth: '.item',
-//        itemSelector: '.item',
-//    });
-//});
-
 // share
 $('#shareBtn').click(function () {
     var selectedItemID = getSelectedItemID();
@@ -124,7 +115,7 @@ $('#shareBtn').click(function () {
 });
 
 function getSelectedItemID() {
-    return $('.active').attr('id');
+    return $('[class="tab-pane active"]').attr('id');
 }
 
 function loadShareContent() {
@@ -200,7 +191,6 @@ function createShareContentDOM(shareContent) {
 //get init data function
 function getAllContent() {
     var data = 'start=0&pagesize=10';
-    console.log('data:', data);
 
     $.ajax({
         type: 'POST',
@@ -208,148 +198,140 @@ function getAllContent() {
         dataType: 'JSON',
         url: 'content/batchquery.json',
         success: function success(resultsData, status) {
+            // stop loading
+            $('#loader').addClass('hidden');
 
             var results = JSON.parse(resultsData);
-            //            console.log('success',results.success);
-            //            console.log('myContents',results.myContents);
-            //            console.log('results',results);
 
             if (results.success === 'true') {
-                console.log('batchquery success');
-
                 var myContents = results.myContents;
-                console.log('mycontents', myContents);
+                console.log('myContents', myContents);
 
-                var uname = myContents[0].sharedByUsername;
+                var username = myContents[0].sharedByUsername;
                 // store username in logout button for later use
-                $('#logoutBtn').data('username', uname);
+                $('#logoutBtn').data('username', username);
 
-                for (var i = 0; i < myContents.length; i++) {
-                    //element i
-                    var contents = myContents[i];
-                    console.log('contents', contents);
+                // structure
+                var tabPanel = $('<div/>', {
+                    'role': 'tabpanel'
+                }).appendTo('#mainContainer');
 
-                    var $sharePanel = $('<div role="tabpanel" class="tab-pane"></div>');
-                    var $shareContainer = $('#gridContainer').clone(true);
-                    //delete children
-                    $shareContainer.empty();
-                    var $origin = $('#origin').clone(true);
-                    $origin.attr('id', contents.id);
-                    $shareContainer.append($origin);
+                var navTabs = $('<ul/>', {
+                    'role': 'tablist',
+                    'class': 'nav nav-tabs'
+                });
+                var tabContent = $('<div/>', {
+                    'class': 'tab-content'
+                });
+                tabPanel.append(navTabs, tabContent);
 
-                    //give masonry property
-                    //                    $shareContainer.imagesLoaded( function() {
-                    //                        $shareContainer.masonry({
-                    //                            columnWidth: '.item',
-                    //                            itemSelector: '.item',
-                    //                        });
-                    //                    });
+                // myContents.count
 
-                    if (i === 0) {
-                        $('.active').attr('id', contents.id);
-                        $shareContainer = $('#gridContainer');
-                    } else {
-                        //create new panel!
-                        var $li = $('<li role="presentation"></li>');
-                        $li.attr('id', contents.id);
+                var _loop = function _loop(i) {
+                    // nav tabs 
+                    var apanel = $('<a/>', {
+                        'href': '#panel-' + (i + 1),
+                        'role': 'tab',
+                        'data-toggle': 'tab',
+                        'id': '#panel-' + (i + 1),
+                        'aria-controls': 'panel-' + (i + 1),
+                        'text': 'Panel ' + (i + 1)
+                    });
+                    var panel = $('<li/>', {
+                        'role': 'presentation'
+                    }).append(apanel);
+                    navTabs.append(panel);
 
-                        var $a = $('<a data-toggle="tab" role="tab"></a>');
-                        var tag = 'share-' + (i + 1).toString();
-                        $a.attr('href', '#' + tag);
-                        $a.attr('aria-controls', tag);
-                        $a.append(tag);
-                        $li.append($a);
+                    // tab panes
+                    var tabPane = $('<div/>', {
+                        'role': 'tabpanel',
+                        'class': 'tab-pane',
+                        'id': myContents[i].id
+                    }).appendTo(tabContent);
 
-                        $('[role="tablist"]').append($li);
-
-                        $sharePanel.attr('id', tag);
-                        $sharePanel.append($shareContainer);
-                        $shareContainer.attr('id', tag);
-                        //                        shareContainer.setAttribute('id',tag);
+                    // default set panel 1 active
+                    if (i == 0) {
+                        panel.addClass('active');
+                        tabPane.addClass('active');
                     }
-                    $('#inputPanelHere').append($sharePanel);
 
-                    for (var j = 0; j < contents.contents.length; j++) {
+                    var masonryContainer = $('<div/>', {
+                        'class': 'row masonry-container'
+                    }).appendTo(tabPane);
 
-                        //element of share i
-                        //clone origin
-                        var $item = $('#origin').clone(true);
-                        //                        let item = document.createElement('div');
-                        //                        item.setAttribute('class','col-md-4 col-sm-6 item');
-                        //
-                        //                        let thumbnail = document.createElement('div');
-                        //                        thumbnail.setAttribute('class','thumbnail');
-                        //
-                        //                        let caption = document.createElement('div')
-                        //                        caption.setAttribute('class','caption');
-                        //
-                        //                        let h3 = document.createElement('h3');
-                        //                        let p1 = document.createElement('p');
-                        //                        let p2 = document.createElement('p');
-                        //
-                        //                        let a1 = document.createElement('a');
-                        //                        a1.setAttribute('href','#');
-                        //                        a1.setAttribute('class','btn btn-default');
-                        //                        a1.setAttribute('role','button');
-                        //                        a1.setAttribute('id','selectBtn');
-                        //                        a1.innerHTML = 'select';
-                        //                        p2.appendChild(a1);
-                        //
-                        //                        let a2 = document.createElement('a');
-                        //                        a2.setAttribute('href','#');
-                        //                        a2.setAttribute('class','btn btn-danger');
-                        //                        a2.setAttribute('role','button');
-                        //                        a2.setAttribute('id','deleteBtn');
-                        //                        a2.innerHTML = 'select';
-                        //                        a2.innerHTML = 'button';
-                        //                        p2.appendChild(a2);
-                        //end of basic set of DOM!
+                    panel.on('shown.bs.tab', function (event) {
+                        event.preventDefault();
+                        masonryContainer.imagesLoaded(function () {
+                            masonryContainer.masonry({
+                                columnWidth: '.item',
+                                itemSelector: '.item'
+                            });
+                        });
+                    });
 
-                        //start to input contents to DOM!
-                        $item.find('#description').html(contents.contents[j].text);
-                        //                        p1.innerHTML = contents.contents[j].text;
-                        //                        h3.innerHTML = 'Description';
-                        //
-                        //                        caption.appendChild(h3);
-                        //                        caption.appendChild(p1);
-                        //                        caption.appendChild(p2);
+                    var contents = myContents[i].contents;
+                    for (var j = 0; j < contents.length; ++j) {
+                        var item = $('<div/>', {
+                            'class': 'col-md-4 col-sm-6 item'
+                        }).appendTo(masonryContainer);
 
-                        //if has picture, add img element!
-                        if (contents.contents[j].hasOwnProperty('picName')) {
-                            //                            console.log('have picture');
-                            //                            let image = document.createElement('img');
-                            //                            image.setAttribute('alt','');
-                            //                            let src = '/yolk/pic/download.json?username='+contents.sharedByUsername+'&fileName='+contents.contents[j].picName;
-                            $item.find('#image').attr('src', 'pic/download.json?username=' + contents.sharedByUsername + '&fileName=' + contents.contents[j].picName);
-                            //                            image.setAttribute('src',src);
+                        var thumbnail = $('<div/>', {
+                            'class': 'thumbnail'
+                        }).appendTo(item);
 
-                            //                            thumbnail.appendChild(image);
-                        } else {
-                            $item.find('#image').remove();
-                            console.log('don\'t have image');
+                        // construct content
+                        var content = contents[j];
+                        // img div
+                        if (content.picName) {
+                            var img = $('<img>', {
+                                'src': 'pic/download.json?username=' + username + '&fileName=' + content.picName
+                            }).appendTo(thumbnail);
                         }
-                        //end of adding img
 
-                        //                        thumbnail.appendChild(caption);
-                        //                        item.appendChild(thumbnail);
-                        //                        item.setAttribute('id',contents.id);
-                        $item.attr('id', contents.id);
-                        //end of input contents to DOM!
+                        // caption div
+                        var caption = $('<div/>', {
+                            'class': 'caption'
+                        }).appendTo(thumbnail);
 
-                        //use masonry to add new item
-                        $shareContainer.masonry().append($item).masonry('appended', $item);
-                    }
-                    $shareContainer.masonry('layout');
-                    //basic set of DOM!
+                        // $('<h3>', {
+                        //     text: 'Thumbnail label',
+                        // }).appendTo(caption);
+                        if (content.text) {
+                            $('<p>', {
+                                text: content.text
+                            }).appendTo(caption);
+                        }
+                        var delBtn = $('<a>', {
+                            'href': '#',
+                            'class': 'btn btn-danger',
+                            'role': 'button',
+                            text: 'Delete'
+                        });
+                        $('<p>').append(delBtn).appendTo(caption);
+                    } // end for contents
 
-                    //add a divider of each share. not working???
-                    //                    let ul = document.createElement('ul');
-                    //                    ul.setAttribute('class','nav nav-list');
-                    //                    let divider = document.createElement('li');
-                    //                    divider.setAttribute('class','divider');
-                    //                    ul.appendChild(divider);
-                    //                    $container.masonry().append(ul).masonry('appended',ul);
-                }
+                    // init after all elements created
+                    masonryContainer.imagesLoaded(function () {
+                        masonryContainer.masonry({
+                            columnWidth: '.item',
+                            itemSelector: '.item'
+                        });
+                    });
+                };
+
+                for (var i = 0; i < myContents.length; ++i) {
+                    _loop(i);
+                } // end for myContents
+
+                // footer
+                var footerText = $('<p></p>', {
+                    'class': 'pull-right',
+                    text: '❤️  from the Yolk team'
+                });
+                var footer = $('<div></div>', {
+                    'class': 'footer'
+                }).append(footerText);
+                $('#mainContainer').append(footer);
             } else if (results.success === 'false') {
                 console.log('batchquery failure');
                 window.location.href = '404.html';
@@ -427,27 +409,4 @@ $.urlParam = function (name) {
 
 $('#signupForm').validate();
 $('#loginForm').validate();
-
-(function ($) {
-    var $container = $('.masonry-container');
-    $container.imagesLoaded().progress(function () {
-        $container.masonry({
-            columnWidth: '.item',
-            itemSelector: '.item'
-        });
-    });
-
-    $('a[data-toggle=tab]').each(function () {
-        var $this = $(this);
-
-        $this.on('shown.bs.tab', function () {
-            $container.imagesLoaded(function () {
-                $container.masonry({
-                    columnWidth: '.item',
-                    itemSelector: '.item'
-                });
-            });
-        });
-    });
-})(jQuery);
 //# sourceMappingURL=main.js.map
