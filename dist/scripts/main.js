@@ -213,7 +213,6 @@ function getAllContent() {
                 console.log('mycontents', myContents);
 
                 var uname = myContents[0].sharedByUsername;
-
                 // store username in logout button for later use
                 $('#logoutBtn').data('username', uname);
 
@@ -345,7 +344,6 @@ function getAllContent() {
                 }
             } else if (results.success === 'false') {
                 console.log('batchquery failure');
-                alert('cannot get contents!');
                 window.location.href = '404.html';
             }
         }
