@@ -14,9 +14,29 @@ body {
   text-align: center;
 }
 
+.form-signin-body {
+  padding: 20px;
+  font-size: 14px;
+  background-color: #fff;
+  border: 1px solid #d8dee2;
+  border-radius: 4px;
+}
+
+.form-signin-footer {
+  padding: 15px 20px 15px 20px;
+  vertical-align: middle;
+  margin-top: 16px;
+  margin-bottom: 10px;
+  border: 1px solid #d8dee2;  
+  border-radius: 4px;
+  p {
+    margin: 0;
+  }
+}
+
 .form-signin .form-signin-heading,
 .form-signin .checkbox {
-  margin-bottom: 15px;
+  margin-bottom: 30px;
 }
 .form-signin .checkbox {
   font-weight: normal;
@@ -40,8 +60,8 @@ body {
 }
 .form-signin input[type="password"] {
   margin-bottom: 10px;
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
 }
 
 .alert .container {
