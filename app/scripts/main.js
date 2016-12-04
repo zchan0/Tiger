@@ -260,14 +260,10 @@ function getAllContent(){
                         'class': 'row masonry-container',
                     }).appendTo(tabPane);
 
+                    // relayout when switching panel
                     panel.on('shown.bs.tab', function(event) {
                         event.preventDefault();
-                        masonryContainer.imagesLoaded( function () {
-                            masonryContainer.masonry({
-                                columnWidth: '.item',
-                                itemSelector: '.item'
-                            });
-                        }); 
+                        layout(masonryContainer);                    
                     });
 
                     let contents = myContents[i].contents;
@@ -309,17 +305,31 @@ function getAllContent(){
                             'role': 'button',
                             text: 'Delete',
                         });
+                        delBtn.on('click', function(event) {
+                            event.preventDefault();
+                            $.ajax({
+                                url: 'content/delete.json',
+                                type: 'POST',
+                                dataType: 'JSON',
+                                data: {id: myContents[i].id},
+                            })
+                            .done(function(resultsData, textStatus, jqXHR) {
+                                console.log('delete: ', resultsData);
+                                let results = $.parseJSON(resultsData);
+                                if (results.success === 'true') {
+                                    delBtn.parents('.item').remove();
+                                    layout(masonryContainer);
+                                } else {
+                                    alert(results.errorMsg);
+                                }
+                            })
+                        });
                         $('<p>').append(delBtn).appendTo(caption);
                     } // end for contents
 
-                    // init after all elements created
-                    masonryContainer.imagesLoaded( function () {
-                        masonryContainer.masonry({
-                            columnWidth: '.item',
-                            itemSelector: '.item'
-                        });
-                    });
-
+                    // init layout after all elements created
+                    layout(masonryContainer);
+                    
                 } // end for myContents
 
                 // footer
@@ -342,13 +352,7 @@ function getAllContent(){
 
 //delete item function
 function deleteItem(button){
-    let content = button.parentNode.parentNode.parentNode.parentNode;
-    console.log('this element:',content.id.value);
-    let container = content.parentNode;
-    console.log('this container:',container);
-    container.removeChild(content);
-
-    //need to connnect to server!
+    
 }
 
 
@@ -412,3 +416,12 @@ $.urlParam = function(name) {
 
 $('#signupForm').validate();
 $('#loginForm').validate();
+
+function layout(masonryContainer) {
+    masonryContainer.imagesLoaded( function () {
+        masonryContainer.masonry({
+            columnWidth: '.item',
+            itemSelector: '.item'
+        });
+    });
+}

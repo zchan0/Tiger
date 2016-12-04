@@ -204,134 +204,151 @@ function getAllContent() {
             var results = JSON.parse(resultsData);
 
             if (results.success === 'true') {
-                var myContents = results.myContents;
-                console.log('myContents', myContents);
+                (function () {
+                    var myContents = results.myContents;
+                    console.log('myContents', myContents);
 
-                var username = myContents[0].sharedByUsername;
-                // store username in logout button for later use
-                $('#logoutBtn').data('username', username);
+                    var username = myContents[0].sharedByUsername;
+                    // store username in logout button for later use
+                    $('#logoutBtn').data('username', username);
 
-                // structure
-                var tabPanel = $('<div/>', {
-                    'role': 'tabpanel'
-                }).appendTo('#mainContainer');
+                    // structure
+                    var tabPanel = $('<div/>', {
+                        'role': 'tabpanel'
+                    }).appendTo('#mainContainer');
 
-                var navTabs = $('<ul/>', {
-                    'role': 'tablist',
-                    'class': 'nav nav-tabs'
-                });
-                var tabContent = $('<div/>', {
-                    'class': 'tab-content'
-                });
-                tabPanel.append(navTabs, tabContent);
-
-                // myContents.count
-
-                var _loop = function _loop(i) {
-                    // nav tabs 
-                    var apanel = $('<a/>', {
-                        'href': '#panel-' + (i + 1),
-                        'role': 'tab',
-                        'data-toggle': 'tab',
-                        'id': '#panel-' + (i + 1),
-                        'aria-controls': 'panel-' + (i + 1),
-                        'text': 'Panel ' + (i + 1)
+                    var navTabs = $('<ul/>', {
+                        'role': 'tablist',
+                        'class': 'nav nav-tabs'
                     });
-                    var panel = $('<li/>', {
-                        'role': 'presentation'
-                    }).append(apanel);
-                    navTabs.append(panel);
+                    var tabContent = $('<div/>', {
+                        'class': 'tab-content'
+                    });
+                    tabPanel.append(navTabs, tabContent);
 
-                    // tab panes
-                    var tabPane = $('<div/>', {
-                        'role': 'tabpanel',
-                        'class': 'tab-pane',
-                        'id': myContents[i].id
-                    }).appendTo(tabContent);
+                    // myContents.count
 
-                    // default set panel 1 active
-                    if (i == 0) {
-                        panel.addClass('active');
-                        tabPane.addClass('active');
-                    }
-
-                    var masonryContainer = $('<div/>', {
-                        'class': 'row masonry-container'
-                    }).appendTo(tabPane);
-
-                    panel.on('shown.bs.tab', function (event) {
-                        event.preventDefault();
-                        masonryContainer.imagesLoaded(function () {
-                            masonryContainer.masonry({
-                                columnWidth: '.item',
-                                itemSelector: '.item'
-                            });
+                    var _loop = function _loop(i) {
+                        // nav tabs 
+                        var apanel = $('<a/>', {
+                            'href': '#panel-' + (i + 1),
+                            'role': 'tab',
+                            'data-toggle': 'tab',
+                            'id': '#panel-' + (i + 1),
+                            'aria-controls': 'panel-' + (i + 1),
+                            'text': 'Panel ' + (i + 1)
                         });
-                    });
+                        var panel = $('<li/>', {
+                            'role': 'presentation'
+                        }).append(apanel);
+                        navTabs.append(panel);
 
-                    var contents = myContents[i].contents;
-                    for (var j = 0; j < contents.length; ++j) {
-                        var item = $('<div/>', {
-                            'class': 'col-md-4 col-sm-6 item'
-                        }).appendTo(masonryContainer);
+                        // tab panes
+                        var tabPane = $('<div/>', {
+                            'role': 'tabpanel',
+                            'class': 'tab-pane',
+                            'id': myContents[i].id
+                        }).appendTo(tabContent);
 
-                        var thumbnail = $('<div/>', {
-                            'class': 'thumbnail'
-                        }).appendTo(item);
+                        // default set panel 1 active
+                        if (i == 0) {
+                            panel.addClass('active');
+                            tabPane.addClass('active');
+                        }
 
-                        // construct content
-                        var content = contents[j];
-                        // img div
-                        if (content.picName) {
-                            var img = $('<img>', {
-                                'src': 'pic/download.json?username=' + username + '&fileName=' + content.picName
+                        var masonryContainer = $('<div/>', {
+                            'class': 'row masonry-container'
+                        }).appendTo(tabPane);
+
+                        // relayout when switching panel
+                        panel.on('shown.bs.tab', function (event) {
+                            event.preventDefault();
+                            layout(masonryContainer);
+                        });
+
+                        var contents = myContents[i].contents;
+
+                        var _loop2 = function _loop2(j) {
+                            var item = $('<div/>', {
+                                'class': 'col-md-4 col-sm-6 item'
+                            }).appendTo(masonryContainer);
+
+                            var thumbnail = $('<div/>', {
+                                'class': 'thumbnail'
+                            }).appendTo(item);
+
+                            // construct content
+                            var content = contents[j];
+                            // img div
+                            if (content.picName) {
+                                var img = $('<img>', {
+                                    // 'src': 'pic/download.json?username=' + username + '&fileName=' + content.picName,
+                                    'src': 'http://lorempixel.com/200/200/abstract'
+                                }).appendTo(thumbnail);
+                            }
+
+                            // caption div
+                            var caption = $('<div/>', {
+                                'class': 'caption'
                             }).appendTo(thumbnail);
-                        }
 
-                        // caption div
-                        var caption = $('<div/>', {
-                            'class': 'caption'
-                        }).appendTo(thumbnail);
+                            // $('<h3>', {
+                            //     text: 'Thumbnail label',
+                            // }).appendTo(caption);
+                            if (content.text) {
+                                $('<p>', {
+                                    text: content.text
+                                }).appendTo(caption);
+                            }
+                            var delBtn = $('<a>', {
+                                'href': '#',
+                                'class': 'btn btn-danger',
+                                'role': 'button',
+                                text: 'Delete'
+                            });
+                            delBtn.on('click', function (event) {
+                                event.preventDefault();
+                                $.ajax({
+                                    url: 'content/delete.json',
+                                    type: 'POST',
+                                    dataType: 'JSON',
+                                    data: { id: myContents[i].id }
+                                }).done(function (resultsData, textStatus, jqXHR) {
+                                    console.log('delete: ', resultsData);
+                                    var results = $.parseJSON(resultsData);
+                                    if (results.success === 'true') {
+                                        delBtn.parents('.item').remove();
+                                        layout(masonryContainer);
+                                    } else {
+                                        alert(results.errorMsg);
+                                    }
+                                });
+                            });
+                            $('<p>').append(delBtn).appendTo(caption);
+                        };
 
-                        // $('<h3>', {
-                        //     text: 'Thumbnail label',
-                        // }).appendTo(caption);
-                        if (content.text) {
-                            $('<p>', {
-                                text: content.text
-                            }).appendTo(caption);
-                        }
-                        var delBtn = $('<a>', {
-                            'href': '#',
-                            'class': 'btn btn-danger',
-                            'role': 'button',
-                            text: 'Delete'
-                        });
-                        $('<p>').append(delBtn).appendTo(caption);
-                    } // end for contents
+                        for (var j = 0; j < contents.length; ++j) {
+                            _loop2(j);
+                        } // end for contents
 
-                    // init after all elements created
-                    masonryContainer.imagesLoaded(function () {
-                        masonryContainer.masonry({
-                            columnWidth: '.item',
-                            itemSelector: '.item'
-                        });
+                        // init layout after all elements created
+                        layout(masonryContainer);
+                    };
+
+                    for (var i = 0; i < myContents.length; ++i) {
+                        _loop(i);
+                    } // end for myContents
+
+                    // footer
+                    var footerText = $('<p></p>', {
+                        'class': 'pull-right',
+                        text: '❤️  from the Yolk team'
                     });
-                };
-
-                for (var i = 0; i < myContents.length; ++i) {
-                    _loop(i);
-                } // end for myContents
-
-                // footer
-                var footerText = $('<p></p>', {
-                    'class': 'pull-right',
-                    text: '❤️  from the Yolk team'
-                });
-                var footer = $('<div></div>', {
-                    'class': 'footer'
-                }).append(footerText);
-                $('#mainContainer').append(footer);
+                    var footer = $('<div></div>', {
+                        'class': 'footer'
+                    }).append(footerText);
+                    $('#mainContainer').append(footer);
+                })();
             } else if (results.success === 'false') {
                 console.log('batchquery failure');
                 window.location.href = '404.html';
@@ -341,15 +358,7 @@ function getAllContent() {
 }
 
 //delete item function
-function deleteItem(button) {
-    var content = button.parentNode.parentNode.parentNode.parentNode;
-    console.log('this element:', content.id.value);
-    var container = content.parentNode;
-    console.log('this container:', container);
-    container.removeChild(content);
-
-    //need to connnect to server!
-}
+function deleteItem(button) {}
 
 //haven't let the pic show on page!
 //upload function
@@ -409,4 +418,13 @@ $.urlParam = function (name) {
 
 $('#signupForm').validate();
 $('#loginForm').validate();
+
+function layout(masonryContainer) {
+    masonryContainer.imagesLoaded(function () {
+        masonryContainer.masonry({
+            columnWidth: '.item',
+            itemSelector: '.item'
+        });
+    });
+}
 //# sourceMappingURL=main.js.map
