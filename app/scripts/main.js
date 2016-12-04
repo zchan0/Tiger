@@ -20,25 +20,42 @@ $('#signupBtn').click(function () {
 });
 
 $('#loginBtn').click(function () {
-	 let data  = $('form').serialize();
-	 let login = $.ajax({
-	 	type: 'POST',
-	 	data: data,
-	 	dataType: 'JSON',
-	 	url: 'user/login.json',
-	 	success: function(resultsData, status) {
-	 		let results = JSON.parse(resultsData);
-	 		if (results.success === 'true') {
-	 			console.log(results);
-	 			window.location.href = 'timeline.html';
-	 		} else if (results.success === 'false') {
-	 			console.log('login failed');
-	 			// show login error message
-				$('#alertDiv').removeClass('hidden');
-	 		}
-	 	}
-	 });
+    let data  = $('form').serialize();
+    let login = $.ajax({
+        type: 'POST',
+        data: data,
+        dataType: 'JSON',
+        url: 'user/login.json',
+        success: function(resultsData, status) {
+        	let results = JSON.parse(resultsData);
+        	if (results.success === 'true') {
+        		console.log(results);
+        		window.location.href = 'timeline.html';
+                rememberPassword();
+        	} else if (results.success === 'false') {
+        		console.log('login failed');
+        		// show login error message
+        	$('#alertDiv').removeClass('hidden');
+        	}
+        }
+    });
 });
+
+function rememberPassword() {
+    if ($('#remember').is(':checked')) {
+        var username = $('#username').val();
+        var password = $('#password').val();
+        // set cookies to expire in 14 days
+        Cookies.set('username', username, { expires: 14 });
+        Cookies.set('password', password, { expires: 14 });
+        Cookies.set('remember', true, { expires: 14 });
+    } else {
+        // reset cookies
+        Cookies.set('username', null);
+        Cookies.set('password', null);
+        Cookies.set('remember', null);
+    }
+}
 
 //logout function
 $('#logoutBtn').click(function () {
@@ -58,6 +75,18 @@ $('#logoutBtn').click(function () {
 	 });
 });
 
+$(document).ready(function() {
+    var remember = Cookies.get('remember');
+    if (remember === 'true') {
+        var username = Cookies.get('username');
+        var password = Cookies.get('password');
+        // autofill the fields
+        $('#username').val(username);
+        $('#password').val(password);
+        $('#remember').prop('checked', true);
+    }
+});
+
 //container
 var $container = $('.masonry-container');
 $container.imagesLoaded( function() {
@@ -70,6 +99,7 @@ $container.imagesLoaded( function() {
 // share
 $('#shareBtn').click(function() {
     let selectedItemID = getSelectedItemID();
+    let username = $('#logoutBtn').data('username');
     $.ajax({
         url: 'content/share.json',
         type: 'POST',
@@ -82,8 +112,9 @@ $('#shareBtn').click(function() {
         if (results.success === 'true') {
             let host = $(location).attr('hostname');
             let protocol = $(location).attr('protocol');
-            let username = 'test';
-            $('#shareURLForm').val(protocol + '//' + host + '/?username=' + username + '&id=' + results.id);
+            let port = $(location).attr('port');
+            let path = '/yolk/share.html';
+            $('#shareURLForm').val(protocol + '//' + host + ':' + port + path +  '?username=' + username + '&id=' + results.id);
             $('#shareModal').modal('toggle');
         }
         else if (results.success === 'false') {
@@ -93,7 +124,71 @@ $('#shareBtn').click(function() {
 });
 
 function getSelectedItemID() {
-    return 2500;
+    return 5870;
+}
+
+function loadShareContent() {
+    let ids = $.urlParam('id');
+    $.ajax({
+        url: 'content/query.json',
+        type: 'POST',
+        dataType: 'JSON',
+        data: {id: ids},
+    })
+    .done(function(resultsData, textStatus, jqXHR) {
+        console.log(resultsData);
+        if (results.success === 'true') {
+            let results = $.parseJSON(resultsData);
+            let contents = results.shareContent;
+            createShareContentDOM(contents);
+        }
+        else if (results.success === 'false') {
+            console.log('load content failed');
+        }
+    })
+}
+
+function createShareContentDOM(shareContent) {
+    // [username] share to you
+    let username = shareContent[0].sharedByUsername;
+    let a = $('<a></a>', {
+            href: '#',
+            text: username,
+            });
+    let p = $('<p></p>', {
+        'class' : 'lead share-user',
+        text : ' share to you',
+    }).prepend(a);
+    let hr = $('<hr>');
+
+    $('#shareContainer').append(p, hr);
+
+    // img + text
+    for (let i = shareContent.length - 1; i >= 0; i--) {
+        let contents = shareContent[i].contents;
+        for (let j = contents.length - 1; j >= 0; j--) {
+            let content = contents[i];
+            let src = 'pic/download.json?username=' + username + '&fileName='+ content.picName;
+            let img = $('<img>', {
+                src: src,
+            });
+            let text = $('<p></p>', {
+                'class': 'lead',
+                text: content.text,
+            });
+            $('#shareContainer').append(img, text);
+        }
+    }
+
+    // footer
+    let footerText = $('<p></p>', {
+        'class': 'pull-right',
+        text: '❤️  from the Yolk team',
+    });
+    let footer = $('<div></div>', {
+        'class': 'footer',
+    }).append(footerText);
+    $('#shareContainer').append(footer);
 }
 
 $('a[data-toggle=tab]').each(function () {
@@ -126,14 +221,18 @@ function getAllContent(){
 //            console.log('myContents',results.myContents);
 //            console.log('results',results);
 
-
             if (results.success === 'true') {
                 console.log('batchquery success');
 
                 let myContents = results.myContents;
                 console.log('mycontents',myContents);
 
-                for(var i=0;i<myContents.length;i++){
+                let uname = myContents[0].sharedByUsername;
+
+                // store username in logout button for later use
+                $('#logoutBtn').data('username', uname);
+
+                for(let i = 0; i < myContents.length; i++) {
                     //element i
                     let contents = myContents[i];
                     console.log('contents',contents);
@@ -175,7 +274,7 @@ function getAllContent(){
                     }
                     $('#inputPanelHere').append($sharePanel);
 
-                    for(var j=0;j<contents.contents.length;j++){
+                    for(let j = 0; j < contents.contents.length; j++) {
 
                         //element of share i
                         //clone origin
@@ -325,6 +424,17 @@ $('#loading')
 $('#alertDiv').click(function () {
      $(this).addClass('hidden');
 });
+
+/** Helpers */
+$.urlParam = function(name) {
+    var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+    if (results == null){
+       return null;
+    }
+    else{
+       return results[1] || 0;
+    }
+}
 
 /** Plugin methods */
 

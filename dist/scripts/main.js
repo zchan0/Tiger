@@ -33,6 +33,7 @@ $('#loginBtn').click(function () {
             if (results.success === 'true') {
                 console.log(results);
                 window.location.href = 'timeline.html';
+                rememberPassword();
             } else if (results.success === 'false') {
                 console.log('login failed');
                 // show login error message
@@ -41,6 +42,22 @@ $('#loginBtn').click(function () {
         }
     });
 });
+
+function rememberPassword() {
+    if ($('#remember').is(':checked')) {
+        var username = $('#username').val();
+        var password = $('#password').val();
+        // set cookies to expire in 14 days
+        Cookies.set('username', username, { expires: 14 });
+        Cookies.set('password', password, { expires: 14 });
+        Cookies.set('remember', true, { expires: 14 });
+    } else {
+        // reset cookies
+        Cookies.set('username', null);
+        Cookies.set('password', null);
+        Cookies.set('remember', null);
+    }
+}
 
 //logout function
 $('#logoutBtn').click(function () {
@@ -60,6 +77,7 @@ $('#logoutBtn').click(function () {
     });
 });
 
+<<<<<<< HEAD
 //container
 var $container = $('.masonry-container');
 $container.imagesLoaded(function () {
@@ -67,11 +85,32 @@ $container.imagesLoaded(function () {
         columnWidth: '.item',
         itemSelector: '.item'
     });
+=======
+$(document).ready(function () {
+    var remember = Cookies.get('remember');
+    if (remember === 'true') {
+        var username = Cookies.get('username');
+        var password = Cookies.get('password');
+        // autofill the fields
+        $('#username').val(username);
+        $('#password').val(password);
+        $('#remember').prop('checked', true);
+    }
+});
+
+//container
+var $container = $('#gridContainer');
+$container.masonry({
+    ifFitWidth: true,
+    itemSelector: '.col-md-4 col-sm-6 item',
+    isAnimated: true
+>>>>>>> 97dbfbf9ee46166099f3fa1a3b46f1140f711ca6
 });
 
 // share
 $('#shareBtn').click(function () {
     var selectedItemID = getSelectedItemID();
+    var username = $('#logoutBtn').data('username');
     $.ajax({
         url: 'content/share.json',
         type: 'POST',
@@ -83,8 +122,14 @@ $('#shareBtn').click(function () {
         if (results.success === 'true') {
             var host = $(location).attr('hostname');
             var protocol = $(location).attr('protocol');
+<<<<<<< HEAD
             var username = 'test';
             $('#shareURLForm').val(protocol + '//' + host + '/?username=' + username + '&id=' + results.id);
+=======
+            var port = $(location).attr('port');
+            var path = '/yolk/share.html';
+            $('#shareURLForm').val(protocol + '//' + host + ':' + port + path + '?username=' + username + '&id=' + results.id);
+>>>>>>> 97dbfbf9ee46166099f3fa1a3b46f1140f711ca6
             $('#shareModal').modal('toggle');
         } else if (results.success === 'false') {
             console.log('share failed');
@@ -93,7 +138,69 @@ $('#shareBtn').click(function () {
 });
 
 function getSelectedItemID() {
-    return 2500;
+    return 5870;
+}
+
+function loadShareContent() {
+    var ids = $.urlParam('id');
+    $.ajax({
+        url: 'content/query.json',
+        type: 'POST',
+        dataType: 'JSON',
+        data: { id: ids }
+    }).done(function (resultsData, textStatus, jqXHR) {
+        console.log(resultsData);
+        if (results.success === 'true') {
+            var _results = $.parseJSON(resultsData);
+            var contents = _results.shareContent;
+            createShareContentDOM(contents);
+        } else if (results.success === 'false') {
+            console.log('load content failed');
+        }
+    });
+}
+
+function createShareContentDOM(shareContent) {
+    // [username] share to you
+    var username = shareContent[0].sharedByUsername;
+    var a = $('<a></a>', {
+        href: '#',
+        text: username
+    });
+    var p = $('<p></p>', {
+        'class': 'lead share-user',
+        text: ' share to you'
+    }).prepend(a);
+    var hr = $('<hr>');
+
+    $('#shareContainer').append(p, hr);
+
+    // img + text
+    for (var i = shareContent.length - 1; i >= 0; i--) {
+        var contents = shareContent[i].contents;
+        for (var j = contents.length - 1; j >= 0; j--) {
+            var content = contents[i];
+            var src = 'pic/download.json?username=' + username + '&fileName=' + content.picName;
+            var img = $('<img>', {
+                src: src
+            });
+            var text = $('<p></p>', {
+                'class': 'lead',
+                text: content.text
+            });
+            $('#shareContainer').append(img, text);
+        }
+    }
+
+    // footer
+    var footerText = $('<p></p>', {
+        'class': 'pull-right',
+        text: '❤️  from the Yolk team'
+    });
+    var footer = $('<div></div>', {
+        'class': 'footer'
+    }).append(footerText);
+    $('#shareContainer').append(footer);
 }
 
 $('a[data-toggle=tab]').each(function () {
@@ -120,12 +227,21 @@ function getAllContent() {
         dataType: 'JSON',
         url: 'content/batchquery.json',
         success: function success(resultsData, status) {
+<<<<<<< HEAD
 
             var results = JSON.parse(resultsData);
             //            console.log('success',results.success);
             //            console.log('myContents',results.myContents);
             //            console.log('results',results);
 
+=======
+            console.log('jsonstring', resultsData);
+
+            var results = JSON.parse(resultsData);
+            console.log('success', results.success);
+            console.log('myContents', results.myContents);
+            console.log('results', results);
+>>>>>>> 97dbfbf9ee46166099f3fa1a3b46f1140f711ca6
 
             if (results.success === 'true') {
                 console.log('batchquery success');
@@ -133,10 +249,19 @@ function getAllContent() {
                 var myContents = results.myContents;
                 console.log('mycontents', myContents);
 
+<<<<<<< HEAD
+=======
+                var uname = myContents[0].sharedByUsername;
+
+                // store username in logout button for later use
+                $('#logoutBtn').data('username', uname);
+
+>>>>>>> 97dbfbf9ee46166099f3fa1a3b46f1140f711ca6
                 for (var i = 0; i < myContents.length; i++) {
                     //element i
                     var contents = myContents[i];
                     console.log('contents', contents);
+<<<<<<< HEAD
 
                     var $sharePanel = $('<div role="tabpanel" class="tab-pane"></div>');
                     var $shareContainer = $('#gridContainer').clone(true);
@@ -232,10 +357,66 @@ function getAllContent() {
                             //                            thumbnail.appendChild(image);
                         } else {
                             $item.find('#image').remove();
+=======
+
+                    for (var j = 0; j < contents.contents.length; j++) {
+
+                        //element of share i
+                        var item = document.createElement('div');
+                        item.setAttribute('class', 'col-md-4 col-sm-6 item');
+
+                        var thumbnail = document.createElement('div');
+                        thumbnail.setAttribute('class', 'thumbnail');
+
+                        var caption = document.createElement('div');
+                        caption.setAttribute('class', 'caption');
+
+                        var h3 = document.createElement('h3');
+                        var p1 = document.createElement('p');
+                        var p2 = document.createElement('p');
+
+                        var a1 = document.createElement('a');
+                        a1.setAttribute('href', '#');
+                        a1.setAttribute('class', 'btn btn-default');
+                        a1.setAttribute('role', 'button');
+                        a1.setAttribute('id', 'selectBtn');
+                        a1.innerHTML = 'select';
+                        p2.appendChild(a1);
+
+                        var a2 = document.createElement('a');
+                        a2.setAttribute('href', '#');
+                        a2.setAttribute('class', 'btn btn-danger');
+                        a2.setAttribute('role', 'button');
+                        a2.setAttribute('id', 'deleteBtn');
+                        a2.innerHTML = 'select';
+                        a2.innerHTML = 'button';
+                        p2.appendChild(a2);
+                        //end of basic set of DOM!
+
+                        //start to input contents to DOM!
+                        p1.innerHTML = contents.contents[j].text;
+                        h3.innerHTML = 'Description';
+
+                        caption.appendChild(h3);
+                        caption.appendChild(p1);
+                        caption.appendChild(p2);
+
+                        //if has picture, add img element!
+                        if (contents.contents[j].hasOwnProperty('picName')) {
+                            console.log('have picture');
+                            var image = document.createElement('img');
+                            image.setAttribute('alt', '');
+                            var src = '/yolk/pic/download.json?username=' + contents.sharedByUsername + '&fileName=' + contents.contents[j].picName;
+                            image.setAttribute('src', src);
+
+                            thumbnail.appendChild(image);
+                        } else {
+>>>>>>> 97dbfbf9ee46166099f3fa1a3b46f1140f711ca6
                             console.log('don\'t have image');
                         }
                         //end of adding img
 
+<<<<<<< HEAD
                         //                        thumbnail.appendChild(caption);
                         //                        item.appendChild(thumbnail);
                         //                        item.setAttribute('id',contents.id);
@@ -258,6 +439,25 @@ function getAllContent() {
                     //                    divider.setAttribute('class','divider');
                     //                    ul.appendChild(divider);
                     //                    $container.masonry().append(ul).masonry('appended',ul);
+=======
+                        thumbnail.appendChild(caption);
+                        item.appendChild(thumbnail);
+                        item.setAttribute('id', contents.id);
+                        //end of input contents to DOM!
+
+                        //use masonry to add new item
+                        $container.masonry().append(item).masonry('appended', item);
+                    }
+                    //basic set of DOM!
+
+                    //add a divider of each share. not working???
+                    var ul = document.createElement('ul');
+                    ul.setAttribute('class', 'nav nav-list');
+                    var divider = document.createElement('li');
+                    divider.setAttribute('class', 'divider');
+                    ul.appendChild(divider);
+                    $container.masonry().append(ul).masonry('appended', ul);
+>>>>>>> 97dbfbf9ee46166099f3fa1a3b46f1140f711ca6
                 }
             } else if (results.success === 'false') {
                 console.log('batchquery failure');
@@ -321,6 +521,16 @@ $('#loading').ajaxStart(function () {
 $('#alertDiv').click(function () {
     $(this).addClass('hidden');
 });
+
+/** Helpers */
+$.urlParam = function (name) {
+    var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+    if (results == null) {
+        return null;
+    } else {
+        return results[1] || 0;
+    }
+};
 
 /** Plugin methods */
 
