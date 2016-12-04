@@ -137,10 +137,9 @@ function loadShareContent() {
     })
     .done(function(resultsData, textStatus, jqXHR) {
         console.log(resultsData);
+        let results = $.parseJSON(resultsData);
         if (results.success === 'true') {
-            let results = $.parseJSON(resultsData);
-            let contents = results.shareContent;
-            createShareContentDOM(contents);
+            createShareContentDOM(results.shareContent);
         }
         else if (results.success === 'false') {
             console.log('load content failed');
@@ -150,7 +149,9 @@ function loadShareContent() {
 
 function createShareContentDOM(shareContent) {
     // [username] share to you
-    let username = shareContent[0].sharedByUsername;
+    console.log(shareContent);
+    let username = shareContent.sharedByUsername;
+    console.log('username:', username)
     let a = $('<a></a>', {
             href: '#',
             text: username,
@@ -164,19 +165,26 @@ function createShareContentDOM(shareContent) {
     $('#shareContainer').append(p, hr);
 
     // img + text
-    for (let i = shareContent.length - 1; i >= 0; i--) {
-        let contents = shareContent[i].contents;
-        for (let j = contents.length - 1; j >= 0; j--) {
-            let content = contents[i];
+    let contents = shareContent.contents;
+    console.log('shareContent.contents: ', contents);
+    for (let i = contents.length - 1; i >= 0; i--) {
+        let content = contents[i];
+        let text = $('<p></p>', {
+            'class': 'lead',
+            text: content.text,
+        });
+        if (content.picName != undefined) {
+            console.log('has picture');
             let src = 'pic/download.json?username=' + username + '&fileName='+ content.picName;
             let img = $('<img>', {
                 src: src,
             });
-            let text = $('<p></p>', {
-                'class': 'lead',
-                text: content.text,
-            });
             $('#shareContainer').append(img, text);
+        } else {
+            $('#shareContainer').append(text);
+        }
+        if (i != 0) {
+            $('#shareContainer').append(hr);
         }
     }
 

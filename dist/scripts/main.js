@@ -136,10 +136,9 @@ function loadShareContent() {
         data: { id: ids }
     }).done(function (resultsData, textStatus, jqXHR) {
         console.log(resultsData);
+        var results = $.parseJSON(resultsData);
         if (results.success === 'true') {
-            var _results = $.parseJSON(resultsData);
-            var contents = _results.shareContent;
-            createShareContentDOM(contents);
+            createShareContentDOM(results.shareContent);
         } else if (results.success === 'false') {
             console.log('load content failed');
         }
@@ -148,7 +147,9 @@ function loadShareContent() {
 
 function createShareContentDOM(shareContent) {
     // [username] share to you
-    var username = shareContent[0].sharedByUsername;
+    console.log(shareContent);
+    var username = shareContent.sharedByUsername;
+    console.log('username:', username);
     var a = $('<a></a>', {
         href: '#',
         text: username
@@ -162,19 +163,26 @@ function createShareContentDOM(shareContent) {
     $('#shareContainer').append(p, hr);
 
     // img + text
-    for (var i = shareContent.length - 1; i >= 0; i--) {
-        var contents = shareContent[i].contents;
-        for (var j = contents.length - 1; j >= 0; j--) {
-            var content = contents[i];
+    var contents = shareContent.contents;
+    console.log('shareContent.contents: ', contents);
+    for (var i = contents.length - 1; i >= 0; i--) {
+        var content = contents[i];
+        var text = $('<p></p>', {
+            'class': 'lead',
+            text: content.text
+        });
+        if (content.picName != undefined) {
+            console.log('has picture');
             var src = 'pic/download.json?username=' + username + '&fileName=' + content.picName;
             var img = $('<img>', {
                 src: src
             });
-            var text = $('<p></p>', {
-                'class': 'lead',
-                text: content.text
-            });
             $('#shareContainer').append(img, text);
+        } else {
+            $('#shareContainer').append(text);
+        }
+        if (i != 0) {
+            $('#shareContainer').append(hr);
         }
     }
 
