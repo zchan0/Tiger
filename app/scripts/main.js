@@ -88,13 +88,13 @@ $(document).ready(function() {
 });
 
 //container
-var $container = $('.masonry-container');
-$container.imagesLoaded( function() {
-    $container.masonry({
-        columnWidth: '.item',
-        itemSelector: '.item',
-    });
-});
+//var $container = $('.masonry-container');
+//$container.imagesLoaded( function() {
+//    $container.masonry({
+//        columnWidth: '.item',
+//        itemSelector: '.item',
+//    });
+//});
 
 // share
 $('#shareBtn').click(function() {
@@ -191,18 +191,6 @@ function createShareContentDOM(shareContent) {
     $('#shareContainer').append(footer);
 }
 
-$('a[data-toggle=tab]').each(function () {
-  var $this = $(this);
-
-  $this.on('shown.bs.tab', function () {
-    $container.imagesLoaded( function () {
-      $container.masonry({
-        columnWidth: '.item',
-        itemSelector: '.item'
-      });
-    });
-  });
-});
 
 //get init data function
 function getAllContent(){
@@ -241,6 +229,9 @@ function getAllContent(){
                     let $shareContainer = $('#gridContainer').clone(true);
                     //delete children
                     $shareContainer.empty();
+                    let $origin = $('#origin').clone(true);
+                    $origin.attr('id',contents.id);
+                    $shareContainer.append($origin);
 
                     //give masonry property
 //                    $shareContainer.imagesLoaded( function() {
@@ -251,7 +242,7 @@ function getAllContent(){
 //                    });
 
                     if(i === 0){
-                        $('[role="presentation"]').attr('id',contents.id);
+                        $('.active').attr('id',contents.id);
                         $shareContainer = $('#gridContainer');
                     }else{
                         //create new panel!
@@ -343,11 +334,7 @@ function getAllContent(){
                         //end of input contents to DOM!
 
                         //use masonry to add new item
-                        $shareContainer.masonry({
-                            columnWidth: '.item',
-                            itemSelector: '.item',
-                            initLayout: false
-                        }).append($item).masonry('appended',$item);
+                        $shareContainer.masonry().append($item).masonry('appended',$item);
                     }
                     $shareContainer.masonry('layout');
                     //basic set of DOM!
@@ -363,6 +350,7 @@ function getAllContent(){
             } else if (results.success === 'false') {
                 console.log('batchquery failure');
                 alert('cannot get contents!');
+                window.location.href = '404.html';
             }
         }
     });
@@ -449,4 +437,17 @@ $('#loginForm').validate();
 			itemSelector: '.item'
 		});
 	});
+
+    $('a[data-toggle=tab]').each(function () {
+        var $this = $(this);
+
+        $this.on('shown.bs.tab', function () {
+            $container.imagesLoaded( function () {
+                $container.masonry({
+                    columnWidth: '.item',
+                    itemSelector: '.item'
+                });
+            });
+        });
+    });
 }) (jQuery);

@@ -90,13 +90,13 @@ $(document).ready(function () {
 });
 
 //container
-var $container = $('.masonry-container');
-$container.imagesLoaded(function () {
-    $container.masonry({
-        columnWidth: '.item',
-        itemSelector: '.item'
-    });
-});
+//var $container = $('.masonry-container');
+//$container.imagesLoaded( function() {
+//    $container.masonry({
+//        columnWidth: '.item',
+//        itemSelector: '.item',
+//    });
+//});
 
 // share
 $('#shareBtn').click(function () {
@@ -124,7 +124,7 @@ $('#shareBtn').click(function () {
 });
 
 function getSelectedItemID() {
-    return $('.active').attr("id");
+    return $('.active').attr('id');
 }
 
 function loadShareContent() {
@@ -188,19 +188,6 @@ function createShareContentDOM(shareContent) {
     }).append(footerText);
     $('#shareContainer').append(footer);
 }
-
-$('a[data-toggle=tab]').each(function () {
-    var $this = $(this);
-
-    $this.on('shown.bs.tab', function () {
-        $container.imagesLoaded(function () {
-            $container.masonry({
-                columnWidth: '.item',
-                itemSelector: '.item'
-            });
-        });
-    });
-});
 
 //get init data function
 function getAllContent() {
@@ -441,6 +428,19 @@ $('#loginForm').validate();
         $container.masonry({
             columnWidth: '.item',
             itemSelector: '.item'
+        });
+    });
+
+    $('a[data-toggle=tab]').each(function () {
+        var $this = $(this);
+
+        $this.on('shown.bs.tab', function () {
+            $container.imagesLoaded(function () {
+                $container.masonry({
+                    columnWidth: '.item',
+                    itemSelector: '.item'
+                });
+            });
         });
     });
 })(jQuery);
