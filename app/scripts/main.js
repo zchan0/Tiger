@@ -124,7 +124,7 @@ $('#shareBtn').click(function() {
 });
 
 function getSelectedItemID() {
-    return $('.active').attr("id");
+    return $('.active').attr('id');
 }
 
 function loadShareContent() {
