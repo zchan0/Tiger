@@ -14,6 +14,7 @@ $('#signupBtn').click(function () {
 	 			window.location.href = 'timeline.html';
 	 		} else if (results.success === 'false') {
 	 			console.log('signup failure');
+                alert(results.errorMsg);
 	 		}
 	 	}
 	 });
@@ -35,7 +36,7 @@ $('#loginBtn').click(function () {
         	} else if (results.success === 'false') {
         		console.log('login failed');
         		// show login error message
-        	$('#alertDiv').removeClass('hidden');
+            	$('#alertDiv').removeClass('hidden');
         	}
         }
     });
@@ -70,6 +71,7 @@ $('#logoutBtn').click(function () {
                 window.location.href = 'index.html';
 	 		} else if (results.success === 'false') {
 	 			console.log('logout failure');
+                alert(results.errorMsg);
 	 		}
 	 	}
 	 });
@@ -110,6 +112,7 @@ $('#shareBtn').click(function() {
         }
         else if (results.success === 'false') {
             console.log('share failed');
+            alert(results.errorMsg);
         }
     })
 });
@@ -134,6 +137,7 @@ function loadShareContent() {
         }
         else if (results.success === 'false') {
             console.log('load content failed');
+            alert(results.errorMsg);
         }
     })
 }
@@ -381,7 +385,7 @@ $('#uploadBtn').click(function () {
                 //$('#uploadModal').modal('hide');
             } else if (results.success === 'false') {
                 console.log('logout failure');
-                alert('upload failed, please upload again!');
+                alert(results.errorMsg);
             }
         }
     });
