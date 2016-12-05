@@ -217,7 +217,7 @@ function getAllContent(){
                 let tabPanel = $('<div/>', {
                     'role': 'tabpanel',
                 }).appendTo('#mainContainer');
-                
+
                 let navTabs = $('<ul/>', {
                     'role': 'tablist',
                     'class': 'nav nav-tabs',
@@ -229,7 +229,7 @@ function getAllContent(){
 
                 // myContents.count
                 for(let i = 0; i < myContents.length; ++i) {
-                    // nav tabs 
+                    // nav tabs
                     let apanel = $('<a/>', {
                         'href': '#panel-' + (i + 1),
                         'role': 'tab',
@@ -242,7 +242,7 @@ function getAllContent(){
                         'role': 'presentation',
                     }).append(apanel);
                     navTabs.append(panel);
-                    
+
                     // tab panes
                     let tabPane = $('<div/>', {
                         'role': 'tabpanel',
@@ -253,7 +253,7 @@ function getAllContent(){
                     // default set panel 1 active
                     if (i == 0) {
                         panel.addClass('active');
-                        tabPane.addClass('active');                        
+                        tabPane.addClass('active');
                     }
 
                     let masonryContainer = $('<div/>', {
@@ -263,7 +263,7 @@ function getAllContent(){
                     // relayout when switching panel
                     panel.on('shown.bs.tab', function(event) {
                         event.preventDefault();
-                        layout(masonryContainer);                    
+                        layout(masonryContainer);
                     });
 
                     let contents = myContents[i].contents;
@@ -329,7 +329,7 @@ function getAllContent(){
 
                     // init layout after all elements created
                     layout(masonryContainer);
-                    
+
                 } // end for myContents
 
                 // footer
@@ -344,7 +344,7 @@ function getAllContent(){
 
             } else if (results.success === 'false') {
                 console.log('batchquery failure');
-                window.location.href = '404.html'; 
+                window.location.href = '404.html';
             }
         }
     });
@@ -352,9 +352,40 @@ function getAllContent(){
 
 //delete item function
 function deleteItem(button){
-    
+
 }
 
+//for textContent
+var textContent = {};
+//for image name
+var picContent = {};
+//for count
+var count = 0;
+
+//upload only one file each time
+function uploadOneFile(a){
+    $ajaxFileUpload({
+        url:'pic/upload.json',
+        secureuri: false,
+        fileElementId:'uploadFileInput',
+        dataType:'json',
+        success: function (data, status)
+        {
+            alert(data);
+            let result = JSON.parse(data);
+            if(result.success === true){
+                alert(data);
+            }
+            else{
+                alert(data);
+            }
+        },
+        error: function (data,status,e)
+        {
+            alert(e);
+        }
+    });
+}
 
 //haven't let the pic show on page!
 //upload function
@@ -386,6 +417,25 @@ $('#uploadBtn').click(function () {
         }
     });
 });
+
+function getFileUrl(sourceId) {
+    var url;
+    if (navigator.userAgent.indexOf('MSIE')>=1) { // IE
+        url = document.getElementById(sourceId).value;
+    } else if(navigator.userAgent.indexOf('Firefox')>0) { // Firefox
+        url = window.URL.createObjectURL(document.getElementById(sourceId).files.item(0));
+    } else if(navigator.userAgent.indexOf('Chrome')>0) { // Chrome
+        url = window.URL.createObjectURL(document.getElementById(sourceId).files.item(0));
+    }
+    return url;
+}
+
+function preImg(sourceId, targetId) {
+    var url = getFileUrl(sourceId);
+    var imgPre = document.getElementById(targetId);
+    imgPre.src = url;
+    imgPre.style.display='block';
+}
 
 //show modal uploading function
 $('#loading')

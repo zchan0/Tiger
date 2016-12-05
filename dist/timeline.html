@@ -52,24 +52,24 @@
                 <div class="modal-body">
                     <!-- upload image -->
                     <h3>Chose image file</h3>
-                    <input id="uploadFileInput" type="file" size="45" name="uploadFileInput" class="input"/>
+                    <input id="uploadFileInput" type="file" size="45" name="uploadFileInput" class="input" onchange="preImg(this.id,'preDisplay')"/>
 
                     <!--input label
                     <h3>Image Label</h3>
                     <input id="imageLabel" type="text" class="input"/>
                     -->
+                    <img id="preDisplay" src="" style="display:none; max-width:60%; margin:5%; border-width:5px; border-style:solid;">
 
                     <!--input description-->
                     <h3>Description</h3>
-                    <textarea  id="description" rows="6" cols="80">
-
-                    </textarea>
+                    <textarea  id="description" rows="6" cols="80" style="max-width:100%;"></textarea>
 
                     <!--when waiting for uploading, show this pic!-->
                     <img id="loading" src="loading.gif" style="display:none;">
 
                 </div>
                 <div class="modal-footer">
+                    <button type="button" class="btn btn-success" id="uploadBtn" onclick="uploadOneFile(this)">UploadNext</button>
                     <button type="button" class="btn btn-default" data-dismiss="modal" id="uploadBtn">Upload</button>
                 </div>
             </div>

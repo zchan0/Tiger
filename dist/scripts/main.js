@@ -229,7 +229,7 @@ function getAllContent() {
                     // myContents.count
 
                     var _loop = function _loop(i) {
-                        // nav tabs 
+                        // nav tabs
                         var apanel = $('<a/>', {
                             'href': '#panel-' + (i + 1),
                             'role': 'tab',
@@ -282,8 +282,7 @@ function getAllContent() {
                             // img div
                             if (content.picName) {
                                 var img = $('<img>', {
-                                    // 'src': 'pic/download.json?username=' + username + '&fileName=' + content.picName,
-                                    'src': 'http://lorempixel.com/200/200/abstract'
+                                    'src': 'pic/download.json?username=' + username + '&fileName=' + content.picName
                                 }).appendTo(thumbnail);
                             }
 
@@ -360,6 +359,35 @@ function getAllContent() {
 //delete item function
 function deleteItem(button) {}
 
+//for textContent
+var textContent = {};
+//for image name
+var picContent = {};
+//for count
+var count = 0;
+
+//upload only one file each time
+function uploadOneFile(a) {
+    $ajaxFileUpload({
+        url: 'pic/upload.json',
+        secureuri: false,
+        fileElementId: 'uploadFileInput',
+        dataType: 'json',
+        success: function success(data, status) {
+            alert(data);
+            var result = JSON.parse(data);
+            if (result.success === true) {
+                alert(data);
+            } else {
+                alert(data);
+            }
+        },
+        error: function error(data, status, e) {
+            alert(e);
+        }
+    });
+}
+
 //haven't let the pic show on page!
 //upload function
 $('#uploadBtn').click(function () {
@@ -390,6 +418,28 @@ $('#uploadBtn').click(function () {
         }
     });
 });
+
+function getFileUrl(sourceId) {
+    var url;
+    if (navigator.userAgent.indexOf("MSIE") >= 1) {
+        // IE
+        url = document.getElementById(sourceId).value;
+    } else if (navigator.userAgent.indexOf("Firefox") > 0) {
+        // Firefox
+        url = window.URL.createObjectURL(document.getElementById(sourceId).files.item(0));
+    } else if (navigator.userAgent.indexOf("Chrome") > 0) {
+        // Chrome
+        url = window.URL.createObjectURL(document.getElementById(sourceId).files.item(0));
+    }
+    return url;
+}
+
+function preImg(sourceId, targetId) {
+    var url = getFileUrl(sourceId);
+    var imgPre = document.getElementById(targetId);
+    imgPre.src = url;
+    imgPre.style.display = "block";
+}
 
 //show modal uploading function
 $('#loading').ajaxStart(function () {
