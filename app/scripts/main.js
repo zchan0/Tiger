@@ -212,6 +212,7 @@ function getAllContent(){
         success: function (resultsData, status){
             // stop loading
             $('#loader').addClass('hidden');
+            console.log(resultsData);
 
 	 		let results = JSON.parse(resultsData);
 
@@ -342,6 +343,36 @@ function deleteItem(button){
 
 }
 
+function readFile() {
+    if ($('#uploadFileInput').files && $('#uploadFileInput').files[0]) {
+        var FR= new FileReader();
+        FR.onload = function(e) {
+            document.getElementById('preDisplay').src= e.target.result;
+            let base = e.target.result;
+            let data  = 'img='+base.replace(/data:image\/(png|jpg);base64\,/,'')+'&type='+base.substring(11,14);
+            $.ajax({
+                type: 'POST',
+                data: data,
+                dataType: 'JSON',
+                url: 'pic/upload64.json',
+                success: function(resultsData, status) {
+                    let results = JSON.parse(resultsData);
+                    if (results.success === 'true') {
+                        console.log(results);
+                    } else if (results.success === 'false') {
+                        console.log('login failed');
+                    }
+                },
+                error:function(results,status){
+                    console.log(results);
+                }
+            });
+        };
+        FR.readAsDataURL( $('#uploadFileInput').files[0] );
+    }
+}
+
+
 //for textContent
 var textContent = {};
 //for image name
@@ -351,81 +382,111 @@ var count = 0;
 
 //upload only one file each time
 function uploadOneFile(a){
-    $.ajax({
-        url: 'pic/upload.json',
-        fileElementId: 'uploadFileInput',
-        type: 'POST',
-        cache: false,
-        processData: false,
-        contentType: 'multipart/form-data',
-        dataType: 'json',
-        data: new FormData($('#uploadFileInput')[0]),
-        success: function(resultsData, status) {
-            let results = JSON.parse(resultsData);
-            if (results.success === 'true') {
-                console.log('upload success');
-                //close modal
-                $('#closeModal').click();
-                //$('#uploadModal').modal('hide');
-            } else if (results.success === 'false') {
-                console.log('logout failure');
-                alert(results.errorMsg);
-            }
+    if($('textarea').val() != '' && $('#uploadFileInput')[0].value != ''){
+        if ($('#uploadFileInput')[0].files && $('#uploadFileInput')[0].files[0]) {
+            var FR= new FileReader();
+            FR.onload = function(e) {
+                document.getElementById('preDisplay').src= e.target.result;
+                let base = e.target.result;
+                let data  = 'img='+encodeURIComponent(base.replace(/data:image\/(png|jpg);base64\,/,''))+'&type='+base.substring(11,14);
+                $.ajax({
+                    type: 'POST',
+                    data: data,
+                    dataType: 'JSON',
+                    url: 'pic/upload64.json',
+                    success: function(resultsData, status) {
+                        let results = JSON.parse(resultsData);
+                        if (results.success === 'true') {
+                            textContent[count.toString()]=$('textarea').val();
+                            picContent[count.toString()]=results.picName;
+                            count++;
+                            console.log('upload success');
+                        } else if (results.success === 'false') {
+                            console.log('upload failed');
+                            alert(results.errorMsg);
+                        }
+                    },
+                    error:function(results,status){
+                        console.log(results);
+                        alert(results.errorMsg);
+                    }
+                });
+            };
+            FR.readAsDataURL( $('#uploadFileInput')[0].files[0] );
         }
-    });
-//    $.ajaxFileUpload({
-//        url:'pic/upload.json',
-//        secureuri: false,
-//        fileElementId:'uploadFileInput',
-//        dataType:'json',
-//        success: function (data, status)
-//        {
-//            console.log(data);
-//            alert(data);
-//            let result = JSON.parse(data);
-//            if(result.success === true){
-//                alert(results.picName);
-//            }
-//            else{
-//                alert(data);
-//            }
-//        },
-//        error: function (data,status,e)
-//        {
-//            alert(e);
-//        }
-//    });
+    }
+    if($('textarea').val() != '' && $('#uploadFileInput')[0].value == ''){
+        textContent[count.toString()]=$('textarea').val();
+        count++;
+    }
+    if($('textarea').val() == '' && $('#uploadFileInput')[0].value != ''){
+        if ($('#uploadFileInput')[0].files && $('#uploadFileInput')[0].files[0]) {
+            var FR= new FileReader();
+            FR.onload = function(e) {
+                document.getElementById('preDisplay').src= e.target.result;
+                let base = e.target.result;
+                let data  = 'img='+encodeURIComponent(base.replace(/data:image\/(png|jpg);base64\,/,''))+'&type='+base.substring(11,14);
+                $.ajax({
+                    type: 'POST',
+                    data: data,
+                    dataType: 'JSON',
+                    url: 'pic/upload64.json',
+                    success: function(resultsData, status) {
+                        let results = JSON.parse(resultsData);
+                        if (results.success === 'true') {
+                            picContent[count.toString()]=results.picName;
+                            count++;
+                            console.log('upload success');
+                        } else if (results.success === 'false') {
+                            console.log('upload failed');
+                            alert(results.errorMsg);
+                        }
+                    },
+                    error:function(results,status){
+                        console.log(results);
+                        alert(results.errorMsg);
+                    }
+                });
+            };
+            FR.readAsDataURL( $('#uploadFileInput')[0].files[0] );
+        }
+    }
 }
 
+function isEmptyObject(e) {
+    var t;
+    for (t in e)
+        return !1;
+    return !0
+}
 //haven't let the pic show on page!
 //upload function
 $('#uploadBtn').click(function () {
-    let formdata = new FormData();
-    formdata.append('image',$('#uploadFileInput')[0].files[0]);
-    formdata.append('imageLabel',$('#imageLabel').value);
-    formdata.append('description',$('#description').value);
-
-    $.ajax({
-        url: 'content/publish.json',
-        fileElementId: '1',
-        type: 'POST',
-        cache: false,
-        data: formdata,
-        processData: false,
-        contentType: false,
-        success: function(resultsData, status) {
-            let results = JSON.parse(resultsData);
-            if (results.success === 'true') {
-                console.log('upload success');
-                //close modal
-                $('#closeModal').click();
-                //$('#uploadModal').modal('hide');
-            } else if (results.success === 'false') {
-                console.log('logout failure');
-                alert(results.errorMsg);
+    //return if null
+    if(isEmptyObject(textContent)&&isEmptyObject(picContent));
+    else{
+        let data = 'textContent='+JSON.stringify(textContent)+'&picContent='+JSON.stringify(picContent);
+        console.log(data);
+        $.ajax({
+            url: 'content/publish.json',
+            type: 'POST',
+            data: data,
+            success: function(resultsData, status) {
+                let results = JSON.parse(resultsData);
+                if (results.success === 'true') {
+                    console.log('upload success');
+                    //close modal
+                    $('#closeModal').click();
+                    //$('#uploadModal').modal('hide');
+                } else if (results.success === 'false') {
+                    console.log('logout failure');
+                    alert(results.errorMsg);
+                }
             }
-        }
-    });
+        });
+
+    }
+
 });
 
 function getFileUrl(sourceId) {
@@ -616,7 +677,7 @@ jQuery.extend({
          	 alert(ex.message);
          };
 		}
-		this.start=function(){jForm.submit();jIO.load(_this.onLoad);};
+		this.start=function(){jForm.submit();jIO.on(_this.onLoad);};
 		return this;
 
 	},

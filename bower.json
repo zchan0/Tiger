@@ -8,7 +8,9 @@
     "masonry": "^4.1.1",
     "imagesloaded": "^4.1.1",
     "js-cookie": "^2.1.3",
-    "AjaxFileUpload": "^1.0.0"
+    "AjaxFileUpload": "^1.0.0",
+    "blueimp-file-upload": "fileupload#^9.14.1",
+    "widget": "^1.1.0"
   },
   "overrides": {
     "masonry": {
