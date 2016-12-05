@@ -292,11 +292,9 @@ function getAllContent(){
                         let content = contents[j];
                         // img div
                         if (content.picName) {
-                            let src = (i % 2 === 0) ? 'http://lorempixel.com/200/200/abstract' : 'http://lorempixel.com/200/200/city';
                             let img = $('<img>', {
-                                // 'src': 'pic/download.json?username=' + username + '&fileName=' + content.picName,
+                                'src': 'pic/download.json?username=' + username + '&fileName=' + content.picName,
 
-                                'src': src
                             }).appendTo(thumbnail);
                         }
 
@@ -465,7 +463,7 @@ function isEmptyObject(e) {
 }
 //haven't let the pic show on page!
 //upload function
-$('#uploadBtn').click(function () {
+function publish() {
     //return if null
     if(isEmptyObject(textContent)&&isEmptyObject(picContent));
     else{
@@ -492,7 +490,7 @@ $('#uploadBtn').click(function () {
 
     }
 
-});
+}
 
 function getFileUrl(sourceId) {
     var url;
@@ -543,7 +541,7 @@ $('#deleteBtn').on('click', function(event) {
             // active first panel
             // rename
             $('.nav.nav-tabs > li').each( function (i, n) {
-                $('a', $(n)).html('Panel ' + ++i) 
+                $('a', $(n)).html('Panel ' + ++i)
                 if(i == 1) { $(n).addClass('active'); }
             });
             // active first one

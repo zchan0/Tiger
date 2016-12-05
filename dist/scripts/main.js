@@ -240,7 +240,7 @@ function getAllContent() {
                 // myContents.count
 
                 var _loop = function _loop(i) {
-                    // nav tabs 
+                    // nav tabs
                     var apanel = $('<a/>', {
                         'href': '#panel-' + (i + 1),
                         'role': 'tab',
@@ -261,6 +261,12 @@ function getAllContent() {
                         'id': 'panel-' + (i + 1)
                     }).appendTo(tabContent);
 
+                    // default set panel 1 active
+                    if (i == 0) {
+                        panel.addClass('active');
+                        tabPane.addClass('active');
+                    }
+
                     var masonryContainer = $('<div/>', {
                         'class': 'row masonry-container'
                     }).appendTo(tabPane);
@@ -270,58 +276,6 @@ function getAllContent() {
                         event.preventDefault();
                         layout(masonryContainer);
                     });
-                    tabPanel.append(navTabs, tabContent);
-
-                    // myContents.count
-
-                    var _loop = function _loop(i) {
-                        // nav tabs
-                        var apanel = $('<a/>', {
-                            'href': '#panel-' + (i + 1),
-                            'role': 'tab',
-                            'data-toggle': 'tab',
-                            'aria-controls': 'panel-' + (i + 1),
-                            'text': 'Panel ' + (i + 1)
-                        });
-                        var panel = $('<li/>', {
-                            'role': 'presentation',
-                            'id': myContents[i].id
-                        }).append(apanel);
-                        navTabs.append(panel);
-
-                        // tab panes
-                        var tabPane = $('<div/>', {
-                            'role': 'tabpanel',
-                            'class': 'tab-pane',
-                            'id': 'panel-' + (i + 1)
-                        }).appendTo(tabContent);
-
-                        var masonryContainer = $('<div/>', {
-                            'class': 'row masonry-container'
-                        }).appendTo(tabPane);
-
-                        // relayout when switching panel
-                        panel.on('shown.bs.tab', function (event) {
-                            event.preventDefault();
-                            layout(masonryContainer);
-                        });
-
-                        if (i === 0) {
-                            panel.addClass('active');
-                            tabPane.addClass('active');
-                        }
-
-                        var contents = myContents[i].contents;
-
-                        var _loop2 = function _loop2(j) {
-                            var item = $('<div/>', {
-                                'class': 'col-md-4 col-sm-6 item'
-                            }).appendTo(masonryContainer);
-
-                    if (i === 0) {
-                        panel.addClass('active');
-                        tabPane.addClass('active');
-                    }
 
                     var contents = myContents[i].contents;
                     for (var j = 0; j < contents.length; ++j) {
@@ -337,11 +291,9 @@ function getAllContent() {
                         var content = contents[j];
                         // img div
                         if (content.picName) {
-                            var src = i % 2 === 0 ? 'http://lorempixel.com/200/200/abstract' : 'http://lorempixel.com/200/200/city';
                             var img = $('<img>', {
-                                // 'src': 'pic/download.json?username=' + username + '&fileName=' + content.picName,
+                                'src': 'pic/download.json?username=' + username + '&fileName=' + content.picName
 
-                                'src': src
                             }).appendTo(thumbnail);
                         }
 
@@ -428,6 +380,7 @@ var count = 0;
 function uploadOneFile(a) {
     if ($('textarea').val() != '' && $('#uploadFileInput')[0].value != '') {
         if ($('#uploadFileInput')[0].files && $('#uploadFileInput')[0].files[0]) {
+            $('#loader').removeClass('hidden');
             var FR = new FileReader();
             FR.onload = function (e) {
                 document.getElementById('preDisplay').src = e.target.result;
@@ -445,6 +398,7 @@ function uploadOneFile(a) {
                             picContent[count.toString()] = results.picName;
                             count++;
                             console.log('upload success');
+                            $('#loader').addClass('hidden');
                         } else if (results.success === 'false') {
                             console.log('upload failed');
                             alert(results.errorMsg);
@@ -466,6 +420,7 @@ function uploadOneFile(a) {
     if ($('textarea').val() == '' && $('#uploadFileInput')[0].value != '') {
         if ($('#uploadFileInput')[0].files && $('#uploadFileInput')[0].files[0]) {
             var FR = new FileReader();
+            $('#loader').removeClass('hidden');
             FR.onload = function (e) {
                 document.getElementById('preDisplay').src = e.target.result;
                 var base = e.target.result;
@@ -481,6 +436,7 @@ function uploadOneFile(a) {
                             picContent[count.toString()] = results.picName;
                             count++;
                             console.log('upload success');
+                            $('#loader').addClass('hidden');
                         } else if (results.success === 'false') {
                             console.log('upload failed');
                             alert(results.errorMsg);
@@ -505,7 +461,7 @@ function isEmptyObject(e) {
 }
 //haven't let the pic show on page!
 //upload function
-$('#uploadBtn').click(function () {
+function publish() {
     //return if null
     if (isEmptyObject(textContent) && isEmptyObject(picContent)) ;else {
         var data = 'textContent=' + JSON.stringify(textContent) + '&picContent=' + JSON.stringify(picContent);
@@ -520,6 +476,7 @@ $('#uploadBtn').click(function () {
                     console.log('upload success');
                     //close modal
                     $('#closeModal').click();
+                    window.location.reload();
                     //$('#uploadModal').modal('hide');
                 } else if (results.success === 'false') {
                     console.log('logout failure');
@@ -528,7 +485,7 @@ $('#uploadBtn').click(function () {
             }
         });
     }
-});
+}
 
 function getFileUrl(sourceId) {
     var url;
