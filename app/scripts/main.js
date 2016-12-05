@@ -384,6 +384,7 @@ var count = 0;
 function uploadOneFile(a){
     if($('textarea').val() != '' && $('#uploadFileInput')[0].value != ''){
         if ($('#uploadFileInput')[0].files && $('#uploadFileInput')[0].files[0]) {
+            $('#loader').removeClass('hidden');
             var FR= new FileReader();
             FR.onload = function(e) {
                 document.getElementById('preDisplay').src= e.target.result;
@@ -401,6 +402,7 @@ function uploadOneFile(a){
                             picContent[count.toString()]=results.picName;
                             count++;
                             console.log('upload success');
+                            $('#loader').addClass('hidden');
                         } else if (results.success === 'false') {
                             console.log('upload failed');
                             alert(results.errorMsg);
@@ -422,6 +424,7 @@ function uploadOneFile(a){
     if($('textarea').val() == '' && $('#uploadFileInput')[0].value != ''){
         if ($('#uploadFileInput')[0].files && $('#uploadFileInput')[0].files[0]) {
             var FR= new FileReader();
+            $('#loader').removeClass('hidden');
             FR.onload = function(e) {
                 document.getElementById('preDisplay').src= e.target.result;
                 let base = e.target.result;
@@ -437,6 +440,7 @@ function uploadOneFile(a){
                             picContent[count.toString()]=results.picName;
                             count++;
                             console.log('upload success');
+                            $('#loader').addClass('hidden');
                         } else if (results.success === 'false') {
                             console.log('upload failed');
                             alert(results.errorMsg);
@@ -477,6 +481,7 @@ $('#uploadBtn').click(function () {
                     console.log('upload success');
                     //close modal
                     $('#closeModal').click();
+                    window.location.reload();
                     //$('#uploadModal').modal('hide');
                 } else if (results.success === 'false') {
                     console.log('logout failure');
