@@ -16,6 +16,7 @@ $('#signupBtn').click(function () {
                 window.location.href = 'timeline.html';
             } else if (results.success === 'false') {
                 console.log('signup failure');
+                alert(results.errorMsg);
             }
         }
     });
@@ -72,6 +73,7 @@ $('#logoutBtn').click(function () {
                 window.location.href = 'index.html';
             } else if (results.success === 'false') {
                 console.log('logout failure');
+                alert(results.errorMsg);
             }
         }
     });
@@ -110,6 +112,7 @@ $('#shareBtn').click(function () {
             $('#shareModal').modal('toggle');
         } else if (results.success === 'false') {
             console.log('share failed');
+            alert(results.errorMsg);
         }
     });
 });
@@ -132,6 +135,7 @@ function loadShareContent() {
             createShareContentDOM(results.shareContent);
         } else if (results.success === 'false') {
             console.log('load content failed');
+            alert(results.errorMsg);
         }
     });
 }
@@ -413,7 +417,7 @@ $('#uploadBtn').click(function () {
                 //$('#uploadModal').modal('hide');
             } else if (results.success === 'false') {
                 console.log('logout failure');
-                alert('upload failed, please upload again!');
+                alert(results.errorMsg);
             }
         }
     });
