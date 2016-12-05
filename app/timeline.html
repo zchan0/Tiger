@@ -32,7 +32,7 @@
 
     <div class="container" id="mainContainer">
 
-      <div id="loader"></div>
+      <div class="loader"></div>
 
     </div>
 
@@ -46,7 +46,6 @@
     <script src="/bower_components/imagesloaded/imagesloaded.js"></script>
     <script src="/bower_components/js-cookie/src/js.cookie.js"></script>
     <script src="/bower_components/AjaxFileUpload/jquery.ajaxfileupload.js"></script>
-    <script src="/bower_components/blueimp-file-upload/js/jquery.fileupload.js"></script>
     <script src="/bower_components/widget/widget.js"></script>
     <!-- endbower -->
     <!-- endbuild -->
@@ -74,6 +73,8 @@
     <!-- Modal -->
     <div id="uploadModal" class="modal fade" role="dialog">
         <div class="modal-dialog modal-lg">
+            
+            <div class="loader hidden"></div>
 
             <!-- Modal content-->
             <div class="modal-content">

@@ -211,7 +211,8 @@ function getAllContent(){
         url: 'content/batchquery.json',
         success: function (resultsData, status){
             // stop loading
-            $('#loader').addClass('hidden');
+            let loader = $('.loader')[0];
+            $(loader).addClass('hidden');
             console.log(resultsData);
 
 	 		let results = JSON.parse(resultsData);
@@ -336,11 +337,6 @@ function getAllContent(){
     });
 }
 
-//delete item function
-function deleteItem(button){
-
-}
-
 function readFile() {
     if ($('#uploadFileInput').files && $('#uploadFileInput').files[0]) {
         var FR= new FileReader();
@@ -380,9 +376,12 @@ var count = 0;
 
 //upload only one file each time
 function uploadOneFile(a){
+
+    let loader = $('.loader')[1];
+
     if($('textarea').val() != '' && $('#uploadFileInput')[0].value != ''){
         if ($('#uploadFileInput')[0].files && $('#uploadFileInput')[0].files[0]) {
-            $('#loader').removeClass('hidden');
+            $(loader).removeClass('hidden');
             var FR= new FileReader();
             FR.onload = function(e) {
                 document.getElementById('preDisplay').src= e.target.result;
@@ -394,13 +393,14 @@ function uploadOneFile(a){
                     dataType: 'JSON',
                     url: 'pic/upload64.json',
                     success: function(resultsData, status) {
+                        $(loader).addClass('hidden');
                         let results = JSON.parse(resultsData);
                         if (results.success === 'true') {
                             textContent[count.toString()]=$('textarea').val();
                             picContent[count.toString()]=results.picName;
                             count++;
                             console.log('upload success');
-                            $('#loader').addClass('hidden');
+                            $(loader).addClass('hidden');
                         } else if (results.success === 'false') {
                             console.log('upload failed');
                             alert(results.errorMsg);
@@ -408,6 +408,7 @@ function uploadOneFile(a){
                     },
                     error:function(results,status){
                         console.log(results);
+                        $(loader).addClass('hidden');
                         alert(results.errorMsg);
                     }
                 });
@@ -421,8 +422,8 @@ function uploadOneFile(a){
     }
     if($('textarea').val() == '' && $('#uploadFileInput')[0].value != ''){
         if ($('#uploadFileInput')[0].files && $('#uploadFileInput')[0].files[0]) {
+            $(loader).removeClass('hidden');
             var FR= new FileReader();
-            $('#loader').removeClass('hidden');
             FR.onload = function(e) {
                 document.getElementById('preDisplay').src= e.target.result;
                 let base = e.target.result;
@@ -433,12 +434,12 @@ function uploadOneFile(a){
                     dataType: 'JSON',
                     url: 'pic/upload64.json',
                     success: function(resultsData, status) {
+                        $(loader).addClass('hidden');
                         let results = JSON.parse(resultsData);
                         if (results.success === 'true') {
                             picContent[count.toString()]=results.picName;
                             count++;
                             console.log('upload success');
-                            $('#loader').addClass('hidden');
                         } else if (results.success === 'false') {
                             console.log('upload failed');
                             alert(results.errorMsg);
@@ -446,6 +447,7 @@ function uploadOneFile(a){
                     },
                     error:function(results,status){
                         console.log(results);
+                        $(loader).addClass('hidden');
                         alert(results.errorMsg);
                     }
                 });
