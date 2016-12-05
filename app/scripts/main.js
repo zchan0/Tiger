@@ -77,6 +77,11 @@ $('#logoutBtn').click(function () {
 	 });
 });
 
+// dismiss login error message
+$('#alertDiv').click(function () {
+     $(this).addClass('hidden');
+});
+
 $(document).ready(function() {
     var remember = Cookies.get('remember');
     if (remember === 'true') {
@@ -307,33 +312,7 @@ function getAllContent(){
                                 text: content.text,
                             }).appendTo(caption);
                         }
-                        let delBtn = $('<a>', {
-                            'href': '#',
-                            'class': 'btn btn-danger',
-                            'role': 'button',
-                            text: 'Delete',
-                        });
-                        delBtn.on('click', function(event) {
-                            event.preventDefault();
-                            $.ajax({
-                                url: 'content/delete.json',
-                                type: 'POST',
-                                dataType: 'JSON',
-                                data: {id: myContents[i].id},
-                            })
-                            .done(function(resultsData, textStatus, jqXHR) {
-                                console.log('delete: ', resultsData);
-                                let results = $.parseJSON(resultsData);
-                                if (results.success === 'true') {
-                                    delBtn.parents('.item').remove();
-                                    layout(masonryContainer);
-                                } else {
-                                    alert(results.errorMsg);
-                                }
-                            })
-                        });
-                        $('<p>').append(delBtn).appendTo(caption);
-                    } // end for contents
+                     } // end for contents
 
                     // init layout after all elements created
                     layout(masonryContainer);
@@ -477,10 +456,42 @@ $('#loading')
         $(this).hide();
     });//hide it when uploaded.
 
-// dismiss login error message
-$('#alertDiv').click(function () {
-     $(this).addClass('hidden');
+$('#deleteBtn').on('click', function(event) {
+    event.preventDefault();
+    let selectedItemID = getSelectedItemID();
+    $.ajax({
+        url: 'content/delete.json',
+        type: 'POST',
+        dataType: 'JSON',
+        data: {id: selectedItemID},
+    })
+    .done(function(resultsData, textStatus, jqXHR) {
+        let results = $.parseJSON(resultsData);
+        if (results.success === 'true') {
+            // remove selected one
+            let panel = $('#' + selectedItemID);
+            let tabPane = $('.tab-content').find('.active');
+            tabPane.remove();
+            panel.remove();
+
+            // active first panel
+            // rename
+            $('.nav.nav-tabs > li').each( function (i, n) {
+                $('a', $(n)).html('Panel ' + ++i) 
+                if(i == 1) { $(n).addClass('active'); }
+            });
+            // active first one
+            let tabPane0 = $('.tab-pane').first();
+            tabPane0.addClass('active');
+            // relayout
+            let  masonryContainer = tabPane0.first();
+            layout(masonryContainer);
+        } else {
+            alert(results.errorMsg);
+        }
+    })
 });
+
 
 /** Helpers */
 $.urlParam = function(name) {

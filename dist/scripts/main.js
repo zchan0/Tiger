@@ -79,6 +79,11 @@ $('#logoutBtn').click(function () {
     });
 });
 
+// dismiss login error message
+$('#alertDiv').click(function () {
+    $(this).addClass('hidden');
+});
+
 $(document).ready(function () {
     var remember = Cookies.get('remember');
     if (remember === 'true') {
@@ -209,26 +214,60 @@ function getAllContent() {
             var results = JSON.parse(resultsData);
 
             if (results.success === 'true') {
-                (function () {
-                    var myContents = results.myContents;
-                    console.log('myContents', myContents);
+                var myContents = results.myContents;
+                console.log('myContents', myContents);
 
-                    var username = myContents[0].sharedByUsername;
-                    // store username in logout button for later use
-                    $('#logoutBtn').data('username', username);
-                    // jQuery.data($('#logoutBtn'), 'username', username);
+                var username = myContents[0].sharedByUsername;
+                // store username in logout button for later use
+                $('#logoutBtn').data('username', username);
+                // jQuery.data($('#logoutBtn'), 'username', username);
 
-                    // structure
-                    var tabPanel = $('<div/>', {
-                        'role': 'tabpanel'
-                    }).appendTo('#mainContainer');
+                // structure
+                var tabPanel = $('<div/>', {
+                    'role': 'tabpanel'
+                }).appendTo('#mainContainer');
 
-                    var navTabs = $('<ul/>', {
-                        'role': 'tablist',
-                        'class': 'nav nav-tabs'
+                var navTabs = $('<ul/>', {
+                    'role': 'tablist',
+                    'class': 'nav nav-tabs'
+                });
+                var tabContent = $('<div/>', {
+                    'class': 'tab-content'
+                });
+                tabPanel.append(navTabs, tabContent);
+
+                // myContents.count
+
+                var _loop = function _loop(i) {
+                    // nav tabs 
+                    var apanel = $('<a/>', {
+                        'href': '#panel-' + (i + 1),
+                        'role': 'tab',
+                        'data-toggle': 'tab',
+                        'aria-controls': 'panel-' + (i + 1),
+                        'text': 'Panel ' + (i + 1)
                     });
-                    var tabContent = $('<div/>', {
-                        'class': 'tab-content'
+                    var panel = $('<li/>', {
+                        'role': 'presentation',
+                        'id': myContents[i].id
+                    }).append(apanel);
+                    navTabs.append(panel);
+
+                    // tab panes
+                    var tabPane = $('<div/>', {
+                        'role': 'tabpanel',
+                        'class': 'tab-pane',
+                        'id': 'panel-' + (i + 1)
+                    }).appendTo(tabContent);
+
+                    var masonryContainer = $('<div/>', {
+                        'class': 'row masonry-container'
+                    }).appendTo(tabPane);
+
+                    // relayout when switching panel
+                    panel.on('shown.bs.tab', function (event) {
+                        event.preventDefault();
+                        layout(masonryContainer);
                     });
                     tabPanel.append(navTabs, tabContent);
 
@@ -278,84 +317,65 @@ function getAllContent() {
                                 'class': 'col-md-4 col-sm-6 item'
                             }).appendTo(masonryContainer);
 
-                            var thumbnail = $('<div/>', {
-                                'class': 'thumbnail'
-                            }).appendTo(item);
+                    if (i === 0) {
+                        panel.addClass('active');
+                        tabPane.addClass('active');
+                    }
 
-                            // construct content
-                            var content = contents[j];
-                            // img div
-                            if (content.picName) {
-                                var src = i % 2 === 0 ? 'http://lorempixel.com/200/200/abstract' : 'http://lorempixel.com/200/200/city';
-                                var img = $('<img>', {
-                                    // 'src': 'pic/download.json?username=' + username + '&fileName=' + content.picName,
+                    var contents = myContents[i].contents;
+                    for (var j = 0; j < contents.length; ++j) {
+                        var item = $('<div/>', {
+                            'class': 'col-md-4 col-sm-6 item'
+                        }).appendTo(masonryContainer);
 
-                                    'src': src
-                                }).appendTo(thumbnail);
-                            }
+                        var thumbnail = $('<div/>', {
+                            'class': 'thumbnail'
+                        }).appendTo(item);
 
-                            // caption div
-                            var caption = $('<div/>', {
-                                'class': 'caption'
+                        // construct content
+                        var content = contents[j];
+                        // img div
+                        if (content.picName) {
+                            var src = i % 2 === 0 ? 'http://lorempixel.com/200/200/abstract' : 'http://lorempixel.com/200/200/city';
+                            var img = $('<img>', {
+                                // 'src': 'pic/download.json?username=' + username + '&fileName=' + content.picName,
+
+                                'src': src
                             }).appendTo(thumbnail);
+                        }
 
-                            // $('<h3>', {
-                            //     text: 'Thumbnail label',
-                            // }).appendTo(caption);
-                            if (content.text) {
-                                $('<p>', {
-                                    text: content.text
-                                }).appendTo(caption);
-                            }
-                            var delBtn = $('<a>', {
-                                'href': '#',
-                                'class': 'btn btn-danger',
-                                'role': 'button',
-                                text: 'Delete'
-                            });
-                            delBtn.on('click', function (event) {
-                                event.preventDefault();
-                                $.ajax({
-                                    url: 'content/delete.json',
-                                    type: 'POST',
-                                    dataType: 'JSON',
-                                    data: { id: myContents[i].id }
-                                }).done(function (resultsData, textStatus, jqXHR) {
-                                    console.log('delete: ', resultsData);
-                                    var results = $.parseJSON(resultsData);
-                                    if (results.success === 'true') {
-                                        delBtn.parents('.item').remove();
-                                        layout(masonryContainer);
-                                    } else {
-                                        alert(results.errorMsg);
-                                    }
-                                });
-                            });
-                            $('<p>').append(delBtn).appendTo(caption);
-                        };
+                        // caption div
+                        var caption = $('<div/>', {
+                            'class': 'caption'
+                        }).appendTo(thumbnail);
 
-                        for (var j = 0; j < contents.length; ++j) {
-                            _loop2(j);
-                        } // end for contents
+                        // $('<h3>', {
+                        //     text: 'Thumbnail label',
+                        // }).appendTo(caption);
+                        if (content.text) {
+                            $('<p>', {
+                                text: content.text
+                            }).appendTo(caption);
+                        }
+                    } // end for contents
 
-                        // init layout after all elements created
-                        layout(masonryContainer);
-                    };
+                    // init layout after all elements created
+                    layout(masonryContainer);
+                };
 
-                    for (var i = 0; i < myContents.length; ++i) {
-                        _loop(i);
-                    } // end for myContents
+                for (var i = 0; i < myContents.length; ++i) {
+                    _loop(i);
+                } // end for myContents
 
-                    // footer
-                    var footerText = $('<p></p>', {
-                        'class': 'pull-right',
-                        text: '❤️  from the Yolk team'
-                    });
-                    var footer = $('<div></div>', {
-                        'class': 'footer'
-                    }).append(footerText);
-                    $('#mainContainer').append(footer);
-                })();
+                // footer
+                var footerText = $('<p></p>', {
+                    'class': 'pull-right',
+                    text: '❤️  from the Yolk team'
+                });
+                var footer = $('<div></div>', {
+                    'class': 'footer'
+                }).append(footerText);
+                $('#mainContainer').append(footer);
             } else if (results.success === 'false') {
                 console.log('batchquery failure');
                 window.location.href = '404.html';
@@ -458,9 +478,41 @@ $('#loading').ajaxStart(function () {
     $(this).hide();
 }); //hide it when uploaded.
 
-// dismiss login error message
-$('#alertDiv').click(function () {
-    $(this).addClass('hidden');
+$('#deleteBtn').on('click', function (event) {
+    event.preventDefault();
+    var selectedItemID = getSelectedItemID();
+    $.ajax({
+        url: 'content/delete.json',
+        type: 'POST',
+        dataType: 'JSON',
+        data: { id: selectedItemID }
+    }).done(function (resultsData, textStatus, jqXHR) {
+        var results = $.parseJSON(resultsData);
+        if (results.success === 'true') {
+            // remove selected one
+            var _panel = $('#' + selectedItemID);
+            var _tabPane = $('.tab-content').find('.active');
+            _tabPane.remove();
+            _panel.remove();
+
+            // active first panel
+            // rename
+            $('.nav.nav-tabs > li').each(function (i, n) {
+                $('a', $(n)).html('Panel ' + ++i);
+                if (i == 1) {
+                    $(n).addClass('active');
+                }
+            });
+            // active first one
+            var tabPane0 = $('.tab-pane').first();
+            tabPane0.addClass('active');
+            // relayout
+            var _masonryContainer = tabPane0.first();
+            layout(_masonryContainer);
+        } else {
+            alert(results.errorMsg);
+        }
+    });
 });
 
 /** Helpers */
