@@ -94,6 +94,7 @@ $(document).ready(function () {
 // share
 $('#shareBtn').click(function () {
     var selectedItemID = getSelectedItemID();
+    console.log('selectedItemID: ', selectedItemID);
     var username = $('#logoutBtn').data('username');
     $.ajax({
         url: 'content/share.json',
@@ -118,7 +119,7 @@ $('#shareBtn').click(function () {
 });
 
 function getSelectedItemID() {
-    return $('[class="tab-pane active"]').attr('id');
+    return $('li[class="active"]').attr('id');
 }
 
 function loadShareContent() {
@@ -215,6 +216,7 @@ function getAllContent() {
                     var username = myContents[0].sharedByUsername;
                     // store username in logout button for later use
                     $('#logoutBtn').data('username', username);
+                    // jQuery.data($('#logoutBtn'), 'username', username);
 
                     // structure
                     var tabPanel = $('<div/>', {
@@ -238,12 +240,12 @@ function getAllContent() {
                             'href': '#panel-' + (i + 1),
                             'role': 'tab',
                             'data-toggle': 'tab',
-                            'id': '#panel-' + (i + 1),
                             'aria-controls': 'panel-' + (i + 1),
                             'text': 'Panel ' + (i + 1)
                         });
                         var panel = $('<li/>', {
-                            'role': 'presentation'
+                            'role': 'presentation',
+                            'id': myContents[i].id
                         }).append(apanel);
                         navTabs.append(panel);
 
@@ -251,14 +253,8 @@ function getAllContent() {
                         var tabPane = $('<div/>', {
                             'role': 'tabpanel',
                             'class': 'tab-pane',
-                            'id': myContents[i].id
+                            'id': 'panel-' + (i + 1)
                         }).appendTo(tabContent);
-
-                        // default set panel 1 active
-                        if (i == 0) {
-                            panel.addClass('active');
-                            tabPane.addClass('active');
-                        }
 
                         var masonryContainer = $('<div/>', {
                             'class': 'row masonry-container'
@@ -269,6 +265,11 @@ function getAllContent() {
                             event.preventDefault();
                             layout(masonryContainer);
                         });
+
+                        if (i === 0) {
+                            panel.addClass('active');
+                            tabPane.addClass('active');
+                        }
 
                         var contents = myContents[i].contents;
 
@@ -285,8 +286,11 @@ function getAllContent() {
                             var content = contents[j];
                             // img div
                             if (content.picName) {
+                                var src = i % 2 === 0 ? 'http://lorempixel.com/200/200/abstract' : 'http://lorempixel.com/200/200/city';
                                 var img = $('<img>', {
-                                    'src': 'pic/download.json?username=' + username + '&fileName=' + content.picName
+                                    // 'src': 'pic/download.json?username=' + username + '&fileName=' + content.picName,
+
+                                    'src': src
                                 }).appendTo(thumbnail);
                             }
 

@@ -92,6 +92,7 @@ $(document).ready(function() {
 // share
 $('#shareBtn').click(function() {
     let selectedItemID = getSelectedItemID();
+    console.log('selectedItemID: ', selectedItemID);
     let username = $('#logoutBtn').data('username');
     $.ajax({
         url: 'content/share.json',
@@ -118,7 +119,7 @@ $('#shareBtn').click(function() {
 });
 
 function getSelectedItemID() {
-    return $('[class="tab-pane active"]').attr('id');
+    return $('li[class="active"]').attr('id');
 }
 
 function loadShareContent() {
@@ -216,6 +217,7 @@ function getAllContent(){
                 let username = myContents[0].sharedByUsername;
                 // store username in logout button for later use
                 $('#logoutBtn').data('username', username);
+                // jQuery.data($('#logoutBtn'), 'username', username);
 
                 // structure
                 let tabPanel = $('<div/>', {
@@ -238,12 +240,12 @@ function getAllContent(){
                         'href': '#panel-' + (i + 1),
                         'role': 'tab',
                         'data-toggle': 'tab',
-                        'id': '#panel-' + (i + 1),
                         'aria-controls': 'panel-' + (i + 1),
                         'text': 'Panel ' + (i + 1),
                     });
                     let panel = $('<li/>', {
                         'role': 'presentation',
+                        'id': myContents[i].id,
                     }).append(apanel);
                     navTabs.append(panel);
 
@@ -251,7 +253,7 @@ function getAllContent(){
                     let tabPane = $('<div/>', {
                         'role': 'tabpanel',
                         'class': 'tab-pane',
-                        'id': myContents[i].id,
+                        'id': 'panel-' + (i + 1),
                     }).appendTo(tabContent);
 
                     // default set panel 1 active
@@ -284,9 +286,11 @@ function getAllContent(){
                         let content = contents[j];
                         // img div
                         if (content.picName) {
+                            let src = (i % 2 === 0) ? 'http://lorempixel.com/200/200/abstract' : 'http://lorempixel.com/200/200/city';
                             let img = $('<img>', {
-                                'src': 'pic/download.json?username=' + username + '&fileName=' + content.picName,
-                                // 'src': 'http://lorempixel.com/200/200/abstract'
+                                // 'src': 'pic/download.json?username=' + username + '&fileName=' + content.picName,
+
+                                'src': src
                             }).appendTo(thumbnail);
                         }
 
